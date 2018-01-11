@@ -25,7 +25,7 @@ The subfolders m1, m2, m3, and m4 that are within this `/sandbox` folder are all
 **TODO: 2.**
 Fill in your name above then do a VCS -> Commit.. -> Commit and Push.
 As others fill in their names do a VCS -> Update project.
-After all names are in, then team member #1 can remove unused rows if needed.
+After all names are in, then team member #1 can remove unused rows if needed..
 Additionally team member #1 can mark the TODOs above as DONE.
 Other team members can do an VCS -> Update project to see that change.
 
