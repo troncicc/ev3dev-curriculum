@@ -44,8 +44,9 @@ class Snatch3r(object):
 
         left_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
         right_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
-        left_motor.wait_while(ev3.Motor.STATE_RUNNING)
         print('motors running')
+        left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+
         ev3.Sound.beep()
         print('motors stopped')
 
