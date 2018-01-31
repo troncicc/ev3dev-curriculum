@@ -84,18 +84,18 @@ def main():
 
     time_s = 1  # Any value other than 0.
     while time_s != 0:
-        speed_inches = int(input("Enter a speed in inches per second (0 to 900 dps"))
+        speed = int(input("Enter a speed (0 to 900 dps)"))
         distance = int(input("Enter a distance to travel in inches"))
         print('got data')
 
+        speed_inches = .01053*speed
         time_s = distance/speed_inches
-        speed_dgs = speed_inches//.01053
         print('calculations done')
         print('time_s: ', time_s)
-        print('speed_dgs: ', speed_dgs)
+        print('speed_dgs: ', speed)
 
-        left_motor.run_forever(speed_sp=speed_dgs)
-        right_motor.run_forever(speed_sp=speed_dgs)
+        left_motor.run_forever(speed_sp=speed)
+        right_motor.run_forever(speed_sp=speed)
         print('motors running')
         time.sleep(time_s)
         left_motor.stop()
@@ -120,7 +120,7 @@ def main():
 #      stop()
 #   You may NOT use the advanced motor commands at this time like: run_to_abs_pos, run_to_rel_pos, or run_timed.
 # DONE: 6. Modify the program so that it will exit immediately if the answer to   any   question is 0.
-# TODO: 7. Formally test your work. When you think you have the problem complete run these tests to be sure:
+# DONE: 7. Formally test your work. When you think you have the problem complete run these tests to be sure:
 #   200 dps 24 inches (make sure it drives within 6 inches of the target distance)
 #   400 dps 24 inches (make sure it drives within 6 inches of the target distance)
 #   800 dps 24 inches (make sure it drives within 6 inches of the target distance)
