@@ -52,3 +52,5 @@ class Snatch3r(object):
 
         print("Goodbye!")
         ev3.Sound.speak("Goodbye").wait()
+
+    def turn_degrees(self, degrees_to_turn, turn_speed_sp):
