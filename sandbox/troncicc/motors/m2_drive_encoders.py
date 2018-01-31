@@ -4,13 +4,13 @@ This module lets you practice using the encoder to determine distances while blo
 
 You will now use a run_to_rel_pos command to implement the action drive inches action.
 
-Authors: David Fisher and PUT_YOUR_NAME_HERE.
-"""  # TODO: 1. PUT YOUR NAME IN THE ABOVE LINE.
+Authors: David Fisher and Catianne Troncin.
+"""  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
-# TODO: 2. Copy the contents of your m1_drive_timed.py and paste that text into this file below these comments.
+# DONE: 2. Copy the contents of your m1_drive_timed.py and paste that text into this file below these comments.
 #   If your program says and prints anything at the start change it to print and say "Drive using encoders"
 
-# TODO: 3. Add a beep after the drive motors stop (see code below).  Test your code to hear the beep AFTER movement.
+# DONE: 3. Add a beep after the drive motors stop (see code below).  Test your code to hear the beep AFTER movement.
 #   ev3.Sound.beep().wait()
 
 # TODO: 4. Instead of using the run_forever, time.sleep, stop pattern switch to using the run_to_rel_pos command.
@@ -43,5 +43,41 @@ Authors: David Fisher and PUT_YOUR_NAME_HERE.
 # TODO: 7. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
 #
 # Observations you should make, run_to_rel_pos is easier to use since it uses encoders that are independent of speed.
+import ev3dev.ev3 as ev3
+import time
 
 
+def main():
+    print("--------------------------------------------")
+    print("  Drive using encoders")
+    print("--------------------------------------------")
+    ev3.Sound.speak("Drive using encoders").wait()
+
+    # Connect two large motors on output ports B and C
+    left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
+    right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
+
+    # Check that the motors are actually connected
+    assert left_motor.connected
+    assert right_motor.connected
+    print('motors ready')
+
+    time_s = 1  # Any value other than 0.
+    while time_s != 0:
+        speed = int(input("Enter a speed (0 to 900 dps)"))
+        distance = int(input("Enter a distance to travel in inches"))
+        print('got data')
+
+        print('calculations done')
+
+        left_motor.run_to_rel_pos(position_sp=distance, speed_sp=speed, stop_action='brake')
+        right_motor.run_to_rel_pos(position_sp=distance, speed_sp=speed, stop_action='brake')
+        print('motors running')
+        ev3.Sound.beep().wait()
+        print('motors stopped')
+
+    print("Goodbye!")
+    ev3.Sound.speak("Goodbye").wait()
+
+
+main()
