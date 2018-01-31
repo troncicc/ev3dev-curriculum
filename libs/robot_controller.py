@@ -39,17 +39,16 @@ class Snatch3r(object):
         assert right_motor.connected
         print('motors ready')
 
-        time_s = 1  # Any value other than 0.
-        while time_s != 0:
-            position = inches_target * 90
-            print('calculations done')
 
-            left_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
-            right_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
-            left_motor.wait_while(ev3.Motor.STATE_RUNNING)
-            print('motors running')
-            ev3.Sound.beep()
-            print('motors stopped')
+        position = inches_target * 90
+        print('calculations done')
+
+        left_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
+        right_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
+        left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        print('motors running')
+        ev3.Sound.beep()
+        print('motors stopped')
 
         print("Goodbye!")
         ev3.Sound.speak("Goodbye").wait()
