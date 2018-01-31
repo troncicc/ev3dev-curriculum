@@ -7,13 +7,16 @@ You will now use a run_to_rel_pos command to implement the action drive inches a
 Authors: David Fisher and Kyle Brown.
 """  # DONE: 1. PUT YOUR NAME IN THE ABOVE LINE.
 
-# TODO: 2. Copy the contents of your m1_drive_timed.py and paste that text into this file below these comments.
+# DONE: 2. Copy the contents of your m1_drive_timed.py and paste that text into this file below these comments.
 #   If your program says and prints anything at the start change it to print and say "Drive using encoders"
 
 import ev3dev.ev3 as ev3
 import time
 
-def main():
+print("Start encoder driving")
+
+
+def encoder_drive():
     print("--------------------------------------------")
     print("  Encoder Driving 1")
     print("--------------------------------------------")
@@ -34,24 +37,18 @@ def main():
         distance = int(input("Enter a distance to travel in inches"))
         print('got data')
 
-        speed_inches = .01053*speed
-        time_s = distance/speed_inches
         print('calculations done')
-        print('time_s: ', time_s)
-        print('speed_dgs: ', speed)
 
-        left_motor.run_forever(speed_sp=speed)
-        right_motor.run_forever(speed_sp=speed)
+        left_motor.run_to_rel_pos(position_sp=distance, speed_sp=speed, stop_action='brake')
+        right_motor.run_to_rel_pos(position_sp=distance, speed_sp=speed, stop_action='brake')
         print('motors running')
-        time.sleep(time_s)
-        left_motor.stop()
-        right_motor.stop(stop_action="brake")
+        ev3.Sound.beep().wait()
         print('motors stopped')
 
     print("Goodbye!")
     ev3.Sound.speak("Goodbye").wait()
 
-# TODO: 3. Add a beep after the drive motors stop (see code below).  Test your code to hear the beep AFTER movement.
+# DONE: 3. Add a beep after the drive motors stop (see code below).  Test your code to hear the beep AFTER movement.
 #   ev3.Sound.beep().wait()
 
 # TODO: 4. Instead of using the run_forever, time.sleep, stop pattern switch to using the run_to_rel_pos command.
@@ -85,6 +82,7 @@ def main():
 #
 # Observations you should make, run_to_rel_pos is easier to use since it uses encoders that are independent of speed.
 
-main()
+
+encoder_drive()
 
 
