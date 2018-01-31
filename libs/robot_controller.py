@@ -52,3 +52,4 @@ class Snatch3r(object):
 
         print("Goodbye!")
         ev3.Sound.speak("Goodbye").wait()
+
