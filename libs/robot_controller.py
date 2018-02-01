@@ -25,7 +25,7 @@ class Snatch3r(object):
         print("--------------------------------------------")
         print("  Encoder Driving 1")
         print("--------------------------------------------")
-        ev3.Sound.speak("Drive using encoders").wait()
+        #ev3.Sound.speak("Drive using encoders").wait()
 
         # Connect two large motors on output ports B and C
         left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
@@ -44,17 +44,17 @@ class Snatch3r(object):
         print('motors running')
         left_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
-        ev3.Sound.beep()
+        #ev3.Sound.beep().wait()
         print('motors stopped')
 
         print("Goodbye!")
-        ev3.Sound.speak("Goodbye").wait()
+        #ev3.Sound.speak("Goodbye").wait()
 
     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
         print("--------------------------------------------")
         print("  Turn degrees")
         print("--------------------------------------------")
-        ev3.Sound.speak("Turn degrees").wait()
+        #ev3.Sound.speak("Turn degrees").wait()
 
         # Connect two large motors on output ports B and C
         left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
@@ -75,8 +75,8 @@ class Snatch3r(object):
         print('motors running')
         left_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
-        ev3.Sound.beep().wait()
+        #ev3.Sound.beep().wait()
         print('motors stopped')
 
         print("Goodbye!")
-        ev3.Sound.speak("Goodbye").wait()
+        #ev3.Sound.speak("Goodbye").wait()
