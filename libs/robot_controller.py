@@ -65,7 +65,8 @@ class Snatch3r(object):
         assert right_motor.connected
         print('motors ready')
 
-        position = degrees_to_turn * math.pi/180
+        position = degrees_to_turn * (math.pi/180)
+        print(position)
         # position = inches_target * 90
         print('calculations done')
 
