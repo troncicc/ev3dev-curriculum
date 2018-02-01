@@ -68,7 +68,7 @@ def main():
         turn_speed_sp = int(input("Speed (0 to 900 dps): "))
         if turn_speed_sp == 0:
             break
-        degrees_to_turn = int(input("Distance (inches): "))
+        degrees_to_turn = int(input("Degrees: "))
         if degrees_to_turn == 0:
             break
 
