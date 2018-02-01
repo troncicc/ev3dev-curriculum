@@ -28,7 +28,6 @@ class Snatch3r(object):
         assert self.left_motor.connected
         assert self.right_motor.connected
 
-
     def drive_inches(self, inches_target, speed_dps):
         """A simple program that causes the robot to drive in a straight line given a speed and a distance"""
 
@@ -42,8 +41,7 @@ class Snatch3r(object):
         self.right_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
-
-     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
+    def turn_degrees(self, degrees_to_turn, turn_speed_sp):
         """Causes the robot to turn given a speed and angle"""
 
         # Check that the motors are actually connected
