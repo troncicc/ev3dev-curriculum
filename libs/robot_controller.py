@@ -19,64 +19,39 @@ import time
 class Snatch3r(object):
     """Commands for the Snatch3r robot that might be useful in many different programs."""
 
-    print("Start Snatch3r")
+    def __init__(self):
+        # Connect two large motors on output ports B and C
+        self.left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
+        self.right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
+
+        # Check that the motors are actually connected
+        assert self.left_motor.connected
+        assert self.right_motor.connected
+
 
     def drive_inches(self, inches_target, speed_dps):
-        print("--------------------------------------------")
-        print("  Encoder Driving 1")
-        print("--------------------------------------------")
-        #ev3.Sound.speak("Drive using encoders").wait()
-
-        # Connect two large motors on output ports B and C
-        left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
-        right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
+        """A simple program that causes the robot to drive in a straight line given a speed and a distance"""
 
         # Check that the motors are actually connected
-        assert left_motor.connected
-        assert right_motor.connected
-        print('motors ready')
+        assert self.left_motor.connected
+        assert self.right_motor.connected
 
         position = inches_target * 90
-        print('calculations done')
 
-        left_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
-        right_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
-        print('motors running')
-        left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        self.left_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
+        self.right_motor.run_to_rel_pos(position_sp=position, speed_sp=speed_dps, stop_action='brake')
+        self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
 
-        #ev3.Sound.beep().wait()
-        print('motors stopped')
 
-        print("Goodbye!")
-        #ev3.Sound.speak("Goodbye").wait()
-
-    def turn_degrees(self, degrees_to_turn, turn_speed_sp):
-        print("--------------------------------------------")
-        print("  Turn degrees")
-        print("--------------------------------------------")
-        #ev3.Sound.speak("Turn degrees").wait()
-
-        # Connect two large motors on output ports B and C
-        left_motor = ev3.LargeMotor(ev3.OUTPUT_B)
-        right_motor = ev3.LargeMotor(ev3.OUTPUT_C)
+     def turn_degrees(self, degrees_to_turn, turn_speed_sp):
+        """Causes the robot to turn given a speed and angle"""
 
         # Check that the motors are actually connected
-        assert left_motor.connected
-        assert right_motor.connected
-        print('motors ready')
+        assert self.left_motor.connected
+        assert self.right_motor.connected
 
         position = (degrees_to_turn*(math.pi/180)*3)*90
-        print(position)
-        # position = inches_target * 90
-        print('calculations done')
 
-        left_motor.run_to_rel_pos(position_sp=(position*-1), speed_sp=turn_speed_sp, stop_action='brake')
-        right_motor.run_to_rel_pos(position_sp=position, speed_sp=turn_speed_sp, stop_action='brake')
-        print('motors running')
-        left_motor.wait_while(ev3.Motor.STATE_RUNNING)
-
-        #ev3.Sound.beep().wait()
-        print('motors stopped')
-
-        print("Goodbye!")
-        #ev3.Sound.speak("Goodbye").wait()
+        self.left_motor.run_to_rel_pos(position_sp=(position*-1), speed_sp=turn_speed_sp, stop_action='brake')
+        self.right_motor.run_to_rel_pos(position_sp=position, speed_sp=turn_speed_sp, stop_action='brake')
+        self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
