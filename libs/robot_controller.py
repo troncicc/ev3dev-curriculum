@@ -65,12 +65,12 @@ class Snatch3r(object):
         assert right_motor.connected
         print('motors ready')
 
-        position = degrees_to_turn
+        position = (degrees_to_turn*(math.pi/180)*3)*90
         print(position)
         # position = inches_target * 90
         print('calculations done')
 
-        left_motor.run_to_rel_pos(position_sp=position, speed_sp=(turn_speed_sp*-1), stop_action='brake')
+        left_motor.run_to_rel_pos(position_sp=(position*-1), speed_sp=turn_speed_sp, stop_action='brake')
         right_motor.run_to_rel_pos(position_sp=position, speed_sp=turn_speed_sp, stop_action='brake')
         print('motors running')
         left_motor.wait_while(ev3.Motor.STATE_RUNNING)
