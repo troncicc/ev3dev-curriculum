@@ -70,12 +70,12 @@ class Snatch3r(object):
         while not self.touch_sensor.is_pressed:
             time.sleep(0.01)
         self.arm_motor.stop(stop_action='brake')
-        ev3.Sound.beep()
+        ev3.Sound.beep().wait()
 
         arm_revolutions_for_full_range = 14.2 * 360
         self.arm_motor.run_to_rel_pos(position_sp=arm_revolutions_for_full_range * -1)
         self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)
-        ev3.Sound.beep()
+        ev3.Sound.beep().wait()
 
         self.arm_motor.position = 0
 
@@ -87,11 +87,24 @@ class Snatch3r(object):
         while not self.touch_sensor.is_pressed:
             time.sleep(0.01)
         self.arm_motor.stop(stop_action='brake')
-        ev3.Sound.beep()
+        ev3.Sound.beep().wait()
 
     def arm_down(self):
         assert self.arm_motor
 
         self.arm_motor.run_to_abs_pos(position_sp=0, speed_sp=900)
         self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
-        ev3.Sound.beep()
+        ev3.Sound.beep().wait()
+
+    def shutdown(self):
+        self.right_motor.stop(stop_action='coast')
+        self.left_motor.stop(stop_action='coast')
+        self.arm_motor.stop(stop_action='coast')
+
+        ev3.Leds.set_color(ev3.Leds.LEFT, ev3.Leds.GREEN)
+        ev3.Leds.set_color(ev3.Leds.RIGHT, ev3.Leds.GREEN)
+
+        print("Goodbye")
+        ev3.Sound.speak("Goodbye").wait()
+
+
