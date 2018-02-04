@@ -88,7 +88,7 @@ def arm_calibration(arm_motor, touch_sensor):
     """
 
     arm_motor.run_forever(speed_sp=900)
-    while touch_sensor.is_pressed:
+    while not touch_sensor.is_pressed:
         time.sleep(0.01)
     arm_motor.stop(stop_action='brake')
     print('full up')
@@ -145,7 +145,7 @@ def arm_down(arm_motor):
     print("full down")
     ev3.Sound.beep()
 
-    # TODO: 6. After you fix the bugs in the three arm movement commands demo your code to a TA or instructor.
+    # DONE: 6. After you fix the bugs in the three arm movement commands demo your code to a TA or instructor.
     #
     # Observations you should make, the TouchSensor is easy to use, but the motor commands are still a little bit
     #   tricky.  It is neat that the same motor API works for both the wheels and the arm.

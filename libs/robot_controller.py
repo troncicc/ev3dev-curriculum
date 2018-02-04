@@ -28,6 +28,14 @@ class Snatch3r(object):
         assert self.left_motor.connected
         assert self.right_motor.connected
 
+        # Connect and assert connection of medium motor to output port A
+        self.arm_motor = ev3.MediumMotor(ev3.OUTPUT_A)
+        assert self.arm_motor.connected
+
+        # Define and check sensors are connected
+        self.touch_sensor = ev3.TouchSensor()
+        assert self.touch_sensor
+
     def drive_inches(self, inches_target, speed_dps):
         """A simple program that causes the robot to drive in a straight line given a speed and a distance"""
 
@@ -53,3 +61,37 @@ class Snatch3r(object):
         self.left_motor.run_to_rel_pos(position_sp=(position*-1), speed_sp=turn_speed_sp, stop_action='brake')
         self.right_motor.run_to_rel_pos(position_sp=position, speed_sp=turn_speed_sp, stop_action='brake')
         self.left_motor.wait_while(ev3.Motor.STATE_RUNNING)
+
+    def arm_calibration(self):
+        assert self.touch_sensor
+        assert self.arm_motor
+
+        self.arm_motor.run_forever(speed_sp=900)
+        while not self.touch_sensor.is_pressed:
+            time.sleep(0.01)
+        self.arm_motor.stop(stop_action='brake')
+        ev3.Sound.beep()
+
+        arm_revolutions_for_full_range = 14.2 * 360
+        self.arm_motor.run_to_rel_pos(position_sp=arm_revolutions_for_full_range * -1)
+        self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)
+        ev3.Sound.beep()
+
+        self.arm_motor.position = 0
+
+    def arm_up(self):
+        assert self.arm_motor
+        assert self.touch_sensor
+
+        self.arm_motor.run_forever(speed_sp=900)
+        while not self.touch_sensor.is_pressed:
+            time.sleep(0.01)
+        self.arm_motor.stop(stop_action='brake')
+        ev3.Sound.beep()
+
+    def arm_down(self):
+        assert self.arm_motor
+
+        self.arm_motor.run_to_abs_pos(position_sp=0, speed_sp=900)
+        self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
+        ev3.Sound.beep()
