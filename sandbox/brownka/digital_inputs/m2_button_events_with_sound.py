@@ -55,7 +55,6 @@ def main():
     btn.on_down = handle_down_button
     btn.on_left = handle_left_button
     btn.on_right = handle_right_button
-    btn.on_backspace = lambda state: handle_shutdown(state)
 
     # DONE: 5. Note #4 is lower (this is TO DO #5 which you should do after #4).
     # Add a lambda callback for on_backspace.  The syntax of lambda is:
@@ -66,7 +65,7 @@ def main():
 
     while dc.running:
         btn.process()  # This command is VERY important when using button callbacks!
-        btn.on_backspace = lambda state: handle_shutdown(state)
+        btn.on_backspace = lambda state: handle_shutdown(state, dc)
         time.sleep(0.01)  # A short delay is important to allow other things to happen.
 
     print("Goodbye!")
@@ -124,9 +123,6 @@ def handle_right_button(button_state):
         print("Right button was released")
 
 
-
-
-
 # DONE: 6. Implement the handle_shutdown function.
 #   Function signature should be:
 #       def handle_shutdown(button_state, dc):
@@ -141,11 +137,11 @@ def handle_right_button(button_state):
 # to instead say "Press Back to exit this program."
 
 
-def handle_shutdown(button_state):
+def handle_shutdown(button_state, dc):
     """Handle IR / button event."""
     if button_state:
         print("Back")
-        DataContainer.running = False
+        dc.running = False
 
     else:
         pass
