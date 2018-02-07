@@ -98,6 +98,9 @@ class Snatch3r(object):
         self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
         ev3.Sound.beep().wait()
 
+    def button_forward(self, mqtt_client, left_speed_entry, right_speed_entry):
+        pass
+
     def shutdown(self):
         self.right_motor.stop(stop_action='coast')
         self.left_motor.stop(stop_action='coast')
