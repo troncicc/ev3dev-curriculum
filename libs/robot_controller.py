@@ -35,8 +35,6 @@ class Snatch3r(object):
         # Define and check sensors are connected
         self.touch_sensor = ev3.TouchSensor()
         assert self.touch_sensor
-
-        # Define and check connection of Color Sensor
         self.color_sensor = ev3.ColorSensor()
         assert self.color_sensor
 
