@@ -102,7 +102,7 @@ def drive_to_color(button_state, robot, color_to_seek):
             robot.color_sensor()
 
             if robot.current_color() == color_to_seek:
-                seeking_color = False
+                seeking_color = False #test
 
 
 
