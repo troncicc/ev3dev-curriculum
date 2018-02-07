@@ -36,6 +36,10 @@ class Snatch3r(object):
         self.touch_sensor = ev3.TouchSensor()
         assert self.touch_sensor
 
+        # Define and check connection of Color Sensor
+        self.color_sensor = ev3.ColorSensor()
+        assert self.color_sensor
+
         self.running = True
 
     def drive_inches(self, inches_target, speed_dps):
