@@ -36,6 +36,8 @@ class Snatch3r(object):
         self.touch_sensor = ev3.TouchSensor()
         assert self.touch_sensor
 
+        self.running = True
+
     def drive_inches(self, inches_target, speed_dps):
         """A simple program that causes the robot to drive in a straight line given a speed and a distance"""
 
@@ -106,5 +108,14 @@ class Snatch3r(object):
 
         print("Goodbye")
         ev3.Sound.speak("Goodbye").wait()
+        self.running = False
 
+    def loop_forever(self):
+        # This is a convenience method that I don't really recommend for most programs other than m5.
+        #   This method is only useful if the only input to the robot is coming via mqtt.
+        #   MQTT messages will still call methods, but no other input or output happens.
+        # This method is given here since the concept might be confusing.
+        self.running = True
+        while self.running:
+            time.sleep(0.1)  # Do nothing (except receive MQTT messages) until an MQTT message calls shutdown.
 

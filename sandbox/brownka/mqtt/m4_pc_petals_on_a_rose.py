@@ -30,10 +30,10 @@ import mqtt_remote_method_calls as com
 class MyDelegate(object):
 
     def guess_response(self, message_from_ev3):
-        pass
+        print(message_from_ev3)
 
 
-# TODO: 3. Create a method named guess_response within MyDelegate.
+# DONE: 3. Create a method named guess_response within MyDelegate.
 # guess_response needs to receive self and a string, feel free to call the string parameter message_from_ev3
 # within the body of the method print message_from_ev3.  That's it.  You simply need to hear what EV3 tells you.
 
@@ -43,7 +43,7 @@ def main():
     # Create an mqtt_client object from the com.MqttClient class passing in my_delegate
     # connect_to_ev3
 
-    my_delegate = MyDelegate
+    my_delegate = MyDelegate()
     mqtt_client = com.MqttClient(my_delegate)
     mqtt_client.connect_to_ev3()
 
@@ -93,7 +93,7 @@ def guess(mqtt_client, number_to_guess_entry):
 def set_num_dice(mqtt_client, num_dice_entry):
     """ Calls a method on EV3 called 'set_number_of_dice' passing in an int from the num_dice_entry. """
     # DONE: 6. Write the line of code necessary to implement this method based on the doc string's description.
-    mqtt_client.send_message("set_number_of_dice", [num_dice_entry])
+    mqtt_client.send_message("set_number_of_dice", [int(num_dice_entry.get())])
 
 
 # TODO: 7. See if you can solve the mystery.  Based on the dice how can you solve Petals on a Rose?
