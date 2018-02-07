@@ -27,15 +27,15 @@ Authors: David Fisher and Kyle Brown.
 
 import tkinter
 from tkinter import ttk
-import robot_controller as robo
+
 import mqtt_remote_method_calls as com
-import ev3dev.ev3 as ev3
 
 
 def main():
     # DONE: 2. Setup an mqtt_client.  Notice that since you don't need to receive any messages you do NOT need to have
     # a MyDelegate class.  Simply construct the MqttClient with no parameter in the constructor (easy).
     mqtt_client = com.MqttClient()
+    mqtt_client.connect_to_ev3()
 
     root = tkinter.Tk()
     root.title("MQTT Remote")
@@ -116,32 +116,34 @@ def main():
 # ----------------------------------------------------------------------
 # Tkinter callbacks
 # ----------------------------------------------------------------------
-# TODO: 4. Implement the functions for the drive button callbacks.
+# DONE: 4. Implement the functions for the drive button callbacks.
 
-def button_forward(mqtt_client, left_motor_speed, right_motor_speed):
-    mqtt_client.send_message("button_forward", [left_motor_speed.get, right_motor_speed.get])
+def button_forward(mqtt_client, left_speed_entry, right_speed_entry):
+    print("go forward")
+    mqtt_client.send_message("button_forward", [int(left_speed_entry.get()), int(right_speed_entry.get())])
 
 
 def button_back(mqtt_client, left_motor_speed, right_motor_speed):
-    mqtt_client.send_message("button_back", [left_motor_speed.get, right_motor_speed.get])
+    print("go back")
+    mqtt_client.send_message("button_back", [int(left_motor_speed.get()), int(right_motor_speed.get())])
 
 
 def button_left(mqtt_client, left_motor_speed, right_motor_speed):
-        mqtt_client.send_message("button_left", [left_motor_speed.get, right_motor_speed.get])
+    print("turn left")
+    mqtt_client.send_message("button_left", [int(left_motor_speed.get()), int(right_motor_speed.get())])
 
 
 def button_right(mqtt_client, left_motor_speed, right_motor_speed):
-    mqtt_client.send_message("button_right", [left_motor_speed.get, right_motor_speed.get])
+    print("turn right")
+    mqtt_client.send_message("button_right", [int(left_motor_speed.get()), int(right_motor_speed.get())])
 
 
 def button_stop(mqtt_client):
+    print("stop!")
     mqtt_client.send_message("button_stop")
 
 
-
-
-
-# TODO: 5. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.  This is the final one!
+# DONE: 5. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.  This is the final one!
 #
 # Observations you should make, you did basically this same program using the IR Remote, but your computer can be a
 # remote control that can do A LOT more than an IR Remote.  We are just doing the basics here.
