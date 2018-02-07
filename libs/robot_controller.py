@@ -40,6 +40,9 @@ class Snatch3r(object):
         self.color_sensor = ev3.ColorSensor()
         assert self.color_sensor
 
+        # Define recurring variables
+        self.current_color = 0
+
         self.running = True
 
     def drive_inches(self, inches_target, speed_dps):
@@ -121,6 +124,9 @@ class Snatch3r(object):
     def button_stop(self):
         self.left_motor.stop(stop_action="brake")
         self.right_motor.stop(stop_action="brake")
+
+    def color_sensor(self):
+        self.current_color = self.color_sensor.color()
 
     def shutdown(self):
         self.right_motor.stop(stop_action='coast')
