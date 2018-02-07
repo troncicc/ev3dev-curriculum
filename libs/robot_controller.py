@@ -125,6 +125,10 @@ class Snatch3r(object):
         self.left_motor.stop(stop_action="brake")
         self.right_motor.stop(stop_action="brake")
 
+    def brake(self):
+        self.left_motor.stop(stop_action="brake")
+        self.right_motor.stop(stop_action="brake")
+
     def color_sensor(self):
         self.current_color = self.color_sensor.color()
 
