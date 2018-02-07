@@ -101,7 +101,7 @@ def drive_to_color(button_state, robot, color_to_seek):
             robot.right_motor.run_forever(speed_sp=400)
             robot.color_sensor_get()
 
-            if robot.current_color() == color_to_seek:
+            if robot.current_color == color_to_seek:
                 seeking_color = False
                 robot.brake()
 

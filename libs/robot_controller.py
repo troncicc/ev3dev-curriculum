@@ -42,6 +42,7 @@ class Snatch3r(object):
 
         # Define recurring variables
         self.current_color = 0
+        self.light_intensity = 0
 
         self.running = True
 
@@ -131,6 +132,7 @@ class Snatch3r(object):
 
     def color_sensor_get(self):
         self.current_color = self.color_sensor.color
+        self.light_intensity = self.color_sensor.ambient_light_intensity
 
     def shutdown(self):
         self.right_motor.stop(stop_action='coast')
