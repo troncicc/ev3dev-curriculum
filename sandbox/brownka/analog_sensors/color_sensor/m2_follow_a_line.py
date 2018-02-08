@@ -93,7 +93,7 @@ def follow_the_line(robot, white_level, black_level):
         if robot.reflected_light_intensity >= black_level+30:
             robot.button_right(400, 200)
         else:
-            robot.button_forward(400, 400)
+            robot.button_left(200, 400)
         time.sleep(.01)
 
     robot.brake()

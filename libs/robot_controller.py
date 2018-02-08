@@ -37,6 +37,8 @@ class Snatch3r(object):
         assert self.touch_sensor
         self.color_sensor = ev3.ColorSensor()
         assert self.color_sensor
+        self.ir_sensor = ev3.InfraredSensor()
+        assert self.ir_sensor
 
         # Define recurring variables
         self.current_color = 0
