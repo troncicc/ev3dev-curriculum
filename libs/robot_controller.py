@@ -43,6 +43,8 @@ class Snatch3r(object):
         # don't assert remote_control since it is external from the robot
         self.beacon_seeker = ev3.BeaconSeeker(channel=1)
         assert self.beacon_seeker
+        self.pixy = ev3.Sensor(driver_name="pixy-lego")
+        assert self.pixy
 
         # Define recurring variables
         self.current_color = 0
