@@ -39,6 +39,10 @@ class Snatch3r(object):
         assert self.color_sensor
         self.ir_sensor = ev3.InfraredSensor()
         assert self.ir_sensor
+        self.remote_control = ev3.RemoteControl()
+        # don't assert remote_control since it is external from the robot
+        self.beacon_seeker = ev3.BeaconSeeker(channel=1)
+        assert self.beacon_seeker
 
         # Define recurring variables
         self.current_color = 0
@@ -155,4 +159,46 @@ class Snatch3r(object):
         self.running = True
         while self.running:
             time.sleep(0.1)  # Do nothing (except receive MQTT messages) until an MQTT message calls shutdown.
+
+    def seek_beacon(self):
+        while not self.touch_sensor.is_pressed:
+            # The touch sensor can be used to abort the attempt (sometimes handy during testing)
+
+            # DONE: 3. Use the beacon_seeker object to get the current heading and distance.
+            current_heading = self.beacon_seeker.heading  # use the beacon_seeker heading
+            current_distance = self.beacon_seeker.distance  # use the beacon_seeker distance
+            if current_distance == -128:
+                # If the IR Remote is not found just sit idle for this program until it is moved.
+                print("IR Remote not found. Distance is -128")
+                self.stop()
+            else:
+                if math.fabs(current_heading) < 2:
+                    # Close enough of a heading to move forward
+                    if current_distance < 2:
+                        print("Beacon found!")
+                        self.stop()
+                        return True
+                    else:
+                        print("On the right heading. Distance: ", current_distance)
+                        self.button_forward(forward_speed, forward_speed)
+
+                elif math.fabs(current_heading) < 10:
+                    if current_heading < 0:
+                        print("Adjusting heading:", current_heading)
+                        self.button_left(turn_speed, turn_speed)
+                    else:
+                        print("Adjusting heading:", current_heading)
+                        self.button_right(turn_speed, turn_speed)
+
+                else:
+                    self.stop()
+                    print("Heading too far off")
+
+            time.sleep(0.05)
+
+        # The touch_sensor was pressed to abort the attempt if this code runs.
+        print("Abandon ship!")
+        robot.stop()
+        return False
+
 
