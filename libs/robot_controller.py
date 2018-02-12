@@ -176,12 +176,12 @@ class Snatch3r(object):
             if current_distance == -128:
                 # If the IR Remote is not found, robot spins in place to find beacon
                 print("IR Remote not found. Distance is -128")
-                self.button_right(turn_speed, turn_speed)
+                self.turn_right(turn_speed, turn_speed)
 
             elif current_distance == 100:
                 # If the IR Remote is not found, robot spins in place to find beacon
                 print("IR Remote not found. Distance is 100")
-                self.button_right(turn_speed, turn_speed)
+                self.turn_right(turn_speed, turn_speed)
             else:
                 if math.fabs(current_heading) < 2:
                     # Close enough of a heading to move forward
@@ -192,18 +192,18 @@ class Snatch3r(object):
                         return True
                     else:
                         print("On the right heading. Distance: ", current_distance)
-                        self.button_forward(forward_speed, forward_speed)
+                        self.drive_forward(forward_speed, forward_speed)
 
                 elif math.fabs(current_heading) < 10:
                     if current_heading < 0:
                         print("Adjusting heading:", current_heading)
-                        self.button_left(turn_speed, turn_speed)
+                        self.turn_left(turn_speed, turn_speed)
                     else:
                         print("Adjusting heading:", current_heading)
-                        self.button_right(turn_speed, turn_speed)
+                        self.turn_right(turn_speed, turn_speed)
 
                 else:
-                    self.button_right(turn_speed, turn_speed)
+                    self.turn_right(turn_speed, turn_speed)
                     print("Heading too far off. Heading: ", current_heading)
 
             time.sleep(0.05)
