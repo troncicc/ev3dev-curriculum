@@ -103,9 +103,9 @@ def drive_to_color(button_state, robot, color_to_seek):
 
             if robot.current_color == color_to_seek:
                 seeking_color = False
-                robot.brake()
+                robot.stop()
 
-        # TODO: 4. Call over a TA or instructor to sign your team's checkoff sheet.
+        # DONE: 4. Call over a TA or instructor to sign your team's checkoff sheet.
         #
         # Observations you should make, the instance variable robot.color_sensor.color is always updating
         # to the color seen and that value is given to you as an int.

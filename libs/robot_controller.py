@@ -112,25 +112,21 @@ class Snatch3r(object):
         self.arm_motor.wait_while(ev3.Motor.STATE_RUNNING)  # Blocks until the motor finishes running
         ev3.Sound.beep().wait()
 
-    def button_forward(self, left_motor_speed, right_motor_speed):
+    def drive_forward(self, left_motor_speed, right_motor_speed):
         self.left_motor.run_forever(speed_sp=left_motor_speed)
         self.right_motor.run_forever(speed_sp=right_motor_speed)
 
-    def button_back(self, left_motor_speed, right_motor_speed):
+    def drive_back(self, left_motor_speed, right_motor_speed):
         self.left_motor.run_forever(speed_sp=-left_motor_speed)
         self.right_motor.run_forever(speed_sp=-right_motor_speed)
 
-    def button_left(self, left_motor_speed, right_motor_speed):
+    def turn_left(self, left_motor_speed, right_motor_speed):
         self.left_motor.run_forever(speed_sp=-left_motor_speed)
         self.right_motor.run_forever(speed_sp=right_motor_speed)
 
-    def button_right(self, left_motor_speed, right_motor_speed):
+    def turn_right(self, left_motor_speed, right_motor_speed):
         self.left_motor.run_forever(speed_sp=left_motor_speed)
         self.right_motor.run_forever(speed_sp=-right_motor_speed)
-
-    def button_stop(self):
-        self.left_motor.stop(stop_action="brake")
-        self.right_motor.stop(stop_action="brake")
 
     def stop(self):
         self.left_motor.stop(stop_action="brake")
@@ -163,6 +159,10 @@ class Snatch3r(object):
             time.sleep(0.1)  # Do nothing (except receive MQTT messages) until an MQTT message calls shutdown.
 
     def seek_beacon(self):
+        """
+        Use the beacon mode of the ir_sensors to find the remote. If the beacon is not in range, spin in a circle until
+        the beacon is found.
+        """
 
         forward_speed = 300
         turn_speed = 100
@@ -212,6 +212,3 @@ class Snatch3r(object):
         print("Abandon ship!")
         self.stop()
         return False
-
-
-

@@ -96,11 +96,11 @@ def follow_the_line(robot, white_level, black_level):
             robot.button_left(200, 400)
         time.sleep(.01)
 
-    robot.brake()
+    robot.stop()
     ev3.Sound.speak("Done")
 
 
-# TODO: 6. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
+# DONE: 6. Call over a TA or instructor to sign your team's checkoff sheet and do a code review.
 #
 # Observations you should make, following a black line would be easier with 2 sensors (one on each side of the line),
 # but it can be done with only a single sensor.  There are also optimizations that could be made to follow the line
