@@ -6,8 +6,10 @@ import ev3dev.ev3 as ev3
 import robot_controller as robo
 import time
 import mqtt_remote_method_calls as com
+import warehouse_controller
 
 robot = robo.Snatch3r()
+warehouse = warehouse_controller.WarehouseController
 
 
 class DataContainer(object):
@@ -37,14 +39,9 @@ def main():
     mqtt_client = com.MqttClient(MyDelegateEv3)
     mqtt_client.connect_to_pc()
 
-    btn = ev3.Button()
     wakeup()
     dc.running = True
-    while dc.running is True:
-        btn.on_up = lambda state: test_connection(mqtt_client)
-        btn.on_down = lambda state: shutdown()
 
-        time.sleep(.01)
     shutdown()
 
 
