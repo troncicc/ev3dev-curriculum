@@ -27,27 +27,29 @@ class MyDelegateEv3(object):
         self.running = True
 
     def say_hello(self):
-        ev3.Sound.speak("Hello")
+        ev3.Sound.speak("Hiiii")
 
     def quit(self):
         dc.running = False
 
 
-mqtt_client = com.MqttClient(MyDelegateEv3)
-mqtt_client.connect_to_pc()
-
-
 def main():
+    mqtt_client = com.MqttClient(MyDelegateEv3)
+    mqtt_client.connect_to_pc()
+
+    btn = ev3.Button()
     wakeup()
-    test_connection()
     dc.running = True
-    while dc.running == True:
-        ev3.Button
+    while dc.running is True:
+        btn.on_up = lambda state: test_connection(mqtt_client)
+        btn.on_down = lambda state: shutdown()
+
+        time.sleep(.01)
     shutdown()
 
 
-def test_connection():
-    mqtt_client.send_message("print_stuff", ["some stuff"])
+def test_connection(client):
+    client.send_message("print_stuff", ["some stuff"])
 
 
 def wakeup():

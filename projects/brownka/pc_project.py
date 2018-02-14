@@ -36,7 +36,7 @@ def main():
     main_frame.grid()
 
     say_hi = ttk.Button(main_frame, text="Hello")
-    say_hi.grid(row=2, column=1)
+    say_hi.grid(row=1, column=1)
     say_hi['command'] = lambda: test_connection(mqtt_client)
     end = ttk.Button(main_frame, text="Quit")
     end.grid(row=2, column=1)
@@ -46,7 +46,7 @@ def main():
 
 
 def test_connection(mqtt_client):
-    mqtt_client.send_message("Say_hello", ["self"])
+    mqtt_client.send_message("say_hello", ["self"])
 
 
 def send_end(mqtt_client):
