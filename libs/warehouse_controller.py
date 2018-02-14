@@ -6,58 +6,70 @@ import robot_controller as robo
 import ev3dev.ev3 as ev3
 import time
 
-robot = robo.Snatch3r()
-
 
 class WarehouseController(object):
 
-    def __init__(self):
+    def __init__(self, robot, mqtt_client):
         """Define recurring variables"""
 
         self.white_level = 60
         self.black_level = 40
+        self.robot = robot
+        self.mqtt_client = mqtt_client
+
+    def calibrate_white_level(self):
+        print("Calibrate the white light level")
+        self.robot.color_sensor_get()
+        self.white_level = self.robot.reflected_light_intensity
+
+        print("New white level is {}.".format(self.white_level))
+
+    def calibrate_black_level(self):
+        print("Calibrate the black light level")
+        self.robot.color_sensor_get()
+        self.black_level = self.robot.reflected_light_intensity
 
     def follow_line_right(self):
         following = True
 
         while following is True:
-            robot.color_sensor_get()
+            self.robot.color_sensor_get()
 
-            if robot.touch_sensor.is_pressed:
+            if self.robot.touch_sensor.is_pressed:
                 following = False
 
-            if robot.reflected_light_intensity >= self.black_level + 30:
-                robot.turn_left(400, 200)
+            if self.robot.reflected_light_intensity >= self.black_level + 30:
+                self.robot.turn_left(400, 200)
             else:
-                robot.drive_forward(400, 400)
+                self.robot.drive_forward(400, 400)
             time.sleep(.01)
 
     def follow_line_left(self):
         following = True
 
         while following is True:
-            robot.color_sensor_get()
+            self.robot.color_sensor_get()
 
-            if robot.touch_sensor.is_pressed:
+            if self.robot.touch_sensor.is_pressed:
                 following = False
 
-            if robot.reflected_light_intensity >= self.black_level + 30:
-                robot.turn_right(400, 200)
+            if self.robot.reflected_light_intensity >= self.black_level + 30:
+                self.robot.turn_right(400, 200)
             else:
-                robot.drive_forward(400, 400)
+                self.robot.drive_forward(400, 400)
             time.sleep(.01)
 
     def follow_line_both(self):
         following = True
 
         while following is True:
-            robot.color_sensor_get()
+            self.robot.color_sensor_get()
 
-            if robot.touch_sensor.is_pressed:
+            if self.robot.touch_sensor.is_pressed:
                 following = False
 
-            if robot.reflected_light_intensity >= self.black_level + 30:
-                robot.turn_right(400, 200)
+            if self.robot.reflected_light_intensity >= self.black_level + 30:
+                self.robot.turn_right(400, 200)
             else:
-                robot.turn_left(200, 400)
+                self.robot.turn_left(200, 400)
             time.sleep(.01)

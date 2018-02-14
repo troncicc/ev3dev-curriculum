@@ -8,8 +8,6 @@ import time
 import mqtt_remote_method_calls as com
 import warehouse_controller
 
-robot = robo.Snatch3r()
-warehouse = warehouse_controller.WarehouseController
 
 
 class DataContainer(object):
@@ -18,31 +16,38 @@ class DataContainer(object):
         """Add data to be saved"""
 
 
-dc = DataContainer()
 
 
 class MyDelegateEv3(object):
     """Helper class to receive and send data from the pc"""
 
-    def __init__(self):
+    def __init__(self, dc):
         """Data to be transmitted"""
         self.running = True
+        self.dc = dc
 
     def say_hello(self):
         ev3.Sound.speak("Hiiii")
 
     def quit(self):
-        dc.running = False
+        self.dc.running = False
 
 
 def main():
-    mqtt_client = com.MqttClient(MyDelegateEv3)
+    robot = robo.Snatch3r()
+    dc = DataContainer()
+    my_delegate = MyDelegateEv3(dc)
+    mqtt_client = com.MqttClient(my_delegate)
     mqtt_client.connect_to_pc()
+    warehouse = warehouse_controller.WarehouseController(robot, mqtt_client)
 
     wakeup()
     dc.running = True
+    while dc.running is True:
 
-    shutdown()
+        time.sleep(.01)
+
+    shutdown(robot)
 
 
 def test_connection(client):
@@ -53,7 +58,7 @@ def wakeup():
     ev3.Sound.speak("Hello").wait()
 
 
-def shutdown():
+def shutdown(robot):
     ev3.Sound.speak("Goodbye")
     robot.stop()
 

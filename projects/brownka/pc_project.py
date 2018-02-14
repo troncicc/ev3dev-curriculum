@@ -41,6 +41,16 @@ def main():
     end = ttk.Button(main_frame, text="Quit")
     end.grid(row=2, column=1)
     end['command'] = lambda: send_end(mqtt_client)
+    line_left = ttk.Button(main_frame, text="line_left")
+    line_left.grid(row=1, column=2)
+    line_left['command'] = lambda: follow_line_left(mqtt_client)
+    line_right = ttk.Button(main_frame, text="line_right")
+    line_right.grid(row=2, column=2)
+    line_right['command'] = lambda: follow_line_right(mqtt_client)
+    line_both = ttk.Button(main_frame, text="line_both")
+    line_both.grid(row=3, column=2)
+    line_both['command'] = lambda: follow_line_both(mqtt_client)
+
 
     root.mainloop()
 
@@ -51,6 +61,20 @@ def test_connection(mqtt_client):
 
 def send_end(mqtt_client):
     mqtt_client.send_message("quit", ["self"])
+
+
+def follow_line_left(mqtt_client):
+    mqtt_client.send_message("follow_line_left", ["self"])
+
+
+def follow_line_right(mqtt_client):
+    mqtt_client.send_message("follow_line_right", ["self"])
+
+
+def follow_line_both(mqtt_client):
+    mqtt_client.send_message("follow_line_both", ["self"])
+
+
 
 
 main()

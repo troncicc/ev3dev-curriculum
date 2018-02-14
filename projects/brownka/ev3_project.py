@@ -9,7 +9,6 @@ import mqtt_remote_method_calls as com
 import warehouse_controller
 
 robot = robo.Snatch3r()
-warehouse = warehouse_controller.WarehouseController
 
 
 class DataContainer(object):
@@ -38,9 +37,13 @@ class MyDelegateEv3(object):
 def main():
     mqtt_client = com.MqttClient(MyDelegateEv3)
     mqtt_client.connect_to_pc()
+    warehouse = warehouse_controller.WarehouseController(robot, mqtt_client)
 
     wakeup()
-    dc.running = True
+    wait_for_command = True
+    while wait_for_command is True:
+
+        time.sleep(.01)
 
     shutdown()
 
@@ -50,7 +53,7 @@ def test_connection(client):
 
 
 def wakeup():
-    ev3.Sound.speak("Hello").wait()
+    ev3.Sound.speak("Welcome, Captain. A new shipment has arrived. Would you like me to begin sorting?").wait()
 
 
 def shutdown():
