@@ -5,13 +5,13 @@ PROJECT DETAILS AND SETUP
 
 DONE 1: Create two modules, one to run on the pc and the other to run on the robot
 
-TODO 2: Setup mqtt client to link the two modules together
+DONE 2: Setup mqtt client to link the two modules together
 
 DONE 3: Setup classes to save information for the duration of the program in both sections
 
 TODO 4: Implement warehouse_controller as a class in a new libs file
 
-TODO 5: Add line tracking functions to warehouse
+DONE 5: Add line tracking functions to warehouse
 
 TODO 6: Add mqtt functionality to warehouse
 

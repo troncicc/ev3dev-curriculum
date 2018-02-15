@@ -13,7 +13,7 @@ class MyDelegateEv3(object):
     """Helper class to receive and send data from the pc"""
 
     def __init__(self, robot):
-        """Data to be transmitted"""
+        """Data to be saved and/or transmitted"""
         self.running = True
         self.mqtt_cancel = True
         self.robot = robot
@@ -32,10 +32,17 @@ class MyDelegateEv3(object):
     def follow_line_left(self):
         self.warehouse.follow_line_left()
 
+    def follow_line_right(self):
+        self.warehouse.follow_line_right()
 
+    def follow_line_both(self):
+        self.warehouse.follow_line_both()
 
+    def calibrate_black(self):
+        self.warehouse.calibrate_black_level()
 
-
+    def calibrate_white(self):
+        self.warehouse.calibrate_white_level()
 
 
 def main():

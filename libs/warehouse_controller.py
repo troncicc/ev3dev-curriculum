@@ -30,6 +30,7 @@ class WarehouseController(object):
         self.black_level = self.robot.reflected_light_intensity
 
     def follow_line_right(self):
+        """Follow the right edge of a line"""
         following = True
 
         while following is True:
@@ -50,6 +51,7 @@ class WarehouseController(object):
             time.sleep(.01)
 
     def follow_line_left(self):
+        """Follow the left edge of a line"""
         following = True
 
         while following is True:
@@ -70,6 +72,7 @@ class WarehouseController(object):
             time.sleep(.01)
 
     def follow_line_both(self):
+        """Follow a line regardless of the edge"""
         following = True
 
         while following is True:
@@ -90,10 +93,9 @@ class WarehouseController(object):
             time.sleep(.01)
 
     def turn_at(self):
-        """Causes robot to turn a particular direction when at a junction based on the colour"""
+        """Causes robot to turn 90deg a particular direction when at a junction based on the colour"""
 
         current_color = self.robot.current_color
-
         if current_color == self.color_names[3]:
             self.robot.turn_degrees(90, 300)
 
