@@ -46,6 +46,9 @@ class Snatch3r(object):
         self.pixy = ev3.Sensor(driver_name="pixy-lego")
         assert self.pixy
 
+        # Definition for Brickman buttons
+        self.btn = ev3.Button()
+
         # Define recurring variables
         self.current_color = 0
         self.reflected_light_intensity = 0
