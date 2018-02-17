@@ -9,7 +9,7 @@ DONE 2: Setup mqtt client to link the two modules together
 
 DONE 3: Setup classes to save information for the duration of the program in both sections
 
-TODO 4: Implement warehouse_controller as a class in a new libs file
+DONE 4: Implement warehouse_controller as a class in a new libs file
 
 DONE 5: Add line tracking functions to warehouse
 
