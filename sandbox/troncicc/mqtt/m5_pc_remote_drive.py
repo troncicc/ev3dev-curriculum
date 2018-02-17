@@ -142,27 +142,27 @@ def send_down(mqtt_client):
 # Drive button callbacks
 def forward_callback(mqtt_client, left_speed_entry, right_speed_entry):
     print("button_forward")
-    mqtt_client.send_message("button_forward", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("drive_forward", [int(left_speed_entry.get()), int(right_speed_entry.get())])
 
 
 def left_callback(mqtt_client, left_speed_entry, right_speed_entry):
     print("button_left")
-    mqtt_client.send_message("button_left", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("turn_left", [int(left_speed_entry.get()), int(right_speed_entry.get())])
 
 
 def stop_callback(mqtt_client):
     print("button_stop")
-    mqtt_client.send_message("button_stop")
+    mqtt_client.send_message("stop")
 
 
 def right_callback(mqtt_client, left_speed_entry, right_speed_entry):
     print("button_right")
-    mqtt_client.send_message("button_right", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("turn_right", [int(left_speed_entry.get()), int(right_speed_entry.get())])
 
 
 def back_callback(mqtt_client, left_speed_entry, right_speed_entry):
     print("button_back")
-    mqtt_client.send_message("button_back", [int(left_speed_entry.get()), int(right_speed_entry.get())])
+    mqtt_client.send_message("drive_back", [int(left_speed_entry.get()), int(right_speed_entry.get())])
 
 
 # Quit and Exit button callbacks
