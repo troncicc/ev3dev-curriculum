@@ -13,11 +13,11 @@ DONE 4: Implement warehouse_controller as a class in a new libs file
 
 DONE 5: Add line tracking functions to warehouse
 
-TODO 6: Add mqtt functionality to warehouse
+DONE 6: Add mqtt functionality to warehouse
 
-TODO 7: Find a way for the robot to search for "cargo"
+DONE 7: Find a way for the robot to search for "cargo"
 
-TODO 8: Implement a function to retreive cargo
+DONE 8: Implement a function to retreive cargo
 
 TODO 9 (optional): Make a way for the robot to tell if cargo has been retrieved
                     (ie. did the robot drop the box?)

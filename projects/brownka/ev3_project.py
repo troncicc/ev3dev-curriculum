@@ -10,41 +10,63 @@ import warehouse_controller
 
 
 class MyDelegateEv3(object):
-    """Helper class to receive and send data from the pc"""
+    """Class that performs most of the robot's functions with relation to the PC"""
 
     def __init__(self, robot):
         """Data to be saved and/or transmitted"""
-        self.running = True
-        self.mqtt_cancel = True
         self.robot = robot
         self.warehouse = warehouse_controller.WarehouseController(robot, self)
+        self.running = True
         self.startup = True
+        self.following = True
+        self.seeking = True
+        self.carrying = True
 
     def cancel(self):
-        ev3.Sound.speak("Cancel")
-        self.mqtt_cancel = False
-        self.robot.stop()
+        pass
 
     def reset(self):
-        self.mqtt_cancel = True
+        self.following = True
+        self.seeking = True
 
     def say_hello(self):
-        ev3.Sound.speak("Do you know da wae?")
+        ev3.Sound.speak("Doo yoo know de way?")
 
     def quit(self):
         self.running = False
 
     def follow_line_left(self):
-        self.warehouse.destination = 1
-        print("Destination: ", self.warehouse.destination)
-        self.warehouse.follow_line_left()
+        self.warehouse.cargo_location = 1
+        print("Destination: ", self.warehouse.cargo_location)
+        self.following = True
+        while self.following:
+            self.warehouse.follow_line_left()
+            if self.warehouse.robot.current_color == 4:
+                self.following = False
+            time.sleep(.01)
+        self.robot.stop()
 
     def follow_line_right(self):
-        self.warehouse.destination = 1
-        self.warehouse.follow_line_right()
+        self.warehouse.cargo_location = 1
+        print("Destination: ", self.warehouse.cargo_location)
+        self.following = True
+        while self.following:
+            self.warehouse.follow_line_right()
+            if self.warehouse.robot.current_color == 4:
+                self.following = False
+            time.sleep(.01)
+        self.robot.stop()
 
     def follow_line_both(self):
-        self.warehouse.follow_line_both()
+        self.warehouse.cargo_location = 1
+        print("Destination: ", self.warehouse.cargo_location)
+        self.following = True
+        while self.following:
+            self.warehouse.follow_line_both()
+            if self.warehouse.robot.current_color == 4:
+                self.following = False
+            time.sleep(.01)
+        self.robot.stop()
 
     def calibrate_black(self):
         self.warehouse.calibrate_black_level()
@@ -53,20 +75,79 @@ class MyDelegateEv3(object):
         self.warehouse.calibrate_white_level()
 
     def calibrate_and_continue(self):
-        # self.robot.arm_calibration()
+        self.robot.arm_calibration()
         print("calibrated")
         self.startup = False
+
+    def find_cargo(self):
+        print("search")
+        while self.seeking:
+            self.warehouse.find_cargo()
+            if self.warehouse.cargo_found is True:
+                self.seeking = False
+            time.sleep(.1)
+        self.robot.stop()
+        self.carrying = True
+        ev3.Sound.beep()
+
+
+class Delegate2(object):
+    """Delegate that cancels ongoing functions in the primary delegate and ignore all other commands"""
+
+    def __init__(self, robot, my_delegate):
+        """Data to be saved and/or transmitted"""
+        self.robot = robot
+        self.my_delegate = my_delegate
+
+    def cancel(self):
+        self.my_delegate.following = False
+        self.my_delegate.seeking = False
+        self.robot.stop()
+        ev3.Sound.speak("Cancel")
+
+    def reset(self):
+        pass
+
+    def say_hello(self):
+        pass
+
+    def quit(self):
+        pass
+
+    def follow_line_left(self):
+        pass
+
+    def follow_line_right(self):
+        pass
+
+    def follow_line_both(self):
+        pass
+
+    def calibrate_black(self):
+        pass
+
+    def calibrate_white(self):
+        pass
+
+    def calibrate_and_continue(self):
+        pass
+
+    def find_cargo(self):
+        pass
 
 
 def main():
     robot = robo.Snatch3r()
     my_delegate = MyDelegateEv3(robot)
+    my_delegate2 = Delegate2(robot, my_delegate)
     mqtt_client = com.MqttClient(my_delegate)
+    mqtt_client2 = com.MqttClient(my_delegate2)
     mqtt_client.connect_to_pc()
+    mqtt_client2.connect_to_pc()
 
     wakeup()
 
-    while my_delegate.startup is True:
+    while my_delegate.startup:
         time.sleep(.01)
 
     while my_delegate.running:

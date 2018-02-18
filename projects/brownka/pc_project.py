@@ -22,6 +22,10 @@ class GUI(object):
     def __init__(self, mqtt_client):
         self.mqtt_client = mqtt_client
         self.root = None
+        self.location = None
+        self.destination = None
+        self.location_str = "Location is Not Selected"
+        self.destination_str = "Destination is Not Selected"
 
     def test_connection(self):
         self.mqtt_client.send_message("say_hello")
@@ -44,7 +48,7 @@ class GUI(object):
         self.mqtt_client.send_message("cancel")
 
     def test_func(self):
-        self.mqtt_client.send_message("function", ["self"])
+        self.mqtt_client.send_message("find_cargo")
 
     def wakeup_complete(self):
         self.mqtt_client.send_message("calibrate_and_continue")
@@ -53,7 +57,17 @@ class GUI(object):
     def reset_func(self):
         self.mqtt_client.send_message("reset")
 
-    def main_screen(self):
+    def set_destination(self, destination):
+        self.destination = destination
+        self.destination_str = "Destination {} Selected".format(destination)
+        self.mqtt_client.send_message("set_destination", [destination])
+
+    def set_location(self, location):
+        self.location = location
+        self.location_str = "Location {} Selected".format(location)
+        self.mqtt_client.send_message("set_location", [location])
+
+    def test_screen(self):
         self.root = tkinter.Tk()
         self.root.title = "Test Project"
 
@@ -84,7 +98,7 @@ class GUI(object):
         btn_cancel = ttk.Button(main_frame, text="CANCEL")
         btn_cancel.grid(row=3, column=1)
         btn_cancel['command'] = lambda: self.cancel_func()
-        reset = ttk.Button(main_frame, text="CANCEL")
+        reset = ttk.Button(main_frame, text="RESET")
         reset.grid(row=4, column=1)
         reset['command'] = lambda: self.reset_func()
 
@@ -101,9 +115,55 @@ class GUI(object):
         main_frame = ttk.Frame(self.root, padding=40, relief='raised')
         main_frame.grid()
 
-        calibrate = ttk.Button(main_frame, text="Calibrate and Continue")
+        calibrate = ttk.Button(main_frame, text="Calibrate")
         calibrate.grid(row=1, column=1)
         calibrate['command'] = lambda: self.wakeup_complete()
+
+        self.root.mainloop()
+
+    def main_screen(self):
+        self.root = tkinter.Tk()
+        self.root.title = "Robot Wakeup"
+
+        main_frame = ttk.Frame(self.root, padding=20, relief='raised')
+        main_frame.grid()
+
+        loc = ttk.Label(main_frame, text="Select your Location")
+        loc.grid(row=0, column=1)
+        loc1 = ttk.Button(main_frame, text="Location 1")
+        loc1.grid(row=1, column=1)
+        loc1['command'] = lambda: self.set_location(1)
+        loc2 = ttk.Button(main_frame, text="Location 2")
+        loc2.grid(row=2, column=1)
+        loc2['command'] = lambda: self.set_location(2)
+        loc3 = ttk.Button(main_frame, text="Location 3")
+        loc3.grid(row=3, column=1)
+        loc3['command'] = lambda: self.set_location(3)
+        loc4 = ttk.Button(main_frame, text="Location 4")
+        loc4.grid(row=4, column=1)
+        loc4['command'] = lambda: self.set_location(4)
+        selected_loc = ttk.Label(main_frame, text=self.location_str)
+        selected_loc.grid(row=5, column=1)
+
+        gap = ttk.Label(main_frame, text="     ")
+        gap.grid(row=0, column=2)
+
+        des = ttk.Label(main_frame, text="Select your Destination")
+        des.grid(row=0, column=3)
+        des1 = ttk.Button(main_frame, text="Destination 1")
+        des1.grid(row=1, column=3)
+        des1['command'] = lambda: self.set_destination(1)
+        des2 = ttk.Button(main_frame, text="Destination 2")
+        des2.grid(row=2, column=3)
+        des2['command'] = lambda: self.set_destination(2)
+        des3 = ttk.Button(main_frame, text="Destination 3")
+        des3.grid(row=3, column=3)
+        des3['command'] = lambda: self.set_destination(3)
+        des4 = ttk.Button(main_frame, text="Destination 4")
+        des4.grid(row=4, column=3)
+        des4['command'] = lambda: self.set_destination(4)
+        selected_des = ttk.Label(main_frame, text=self.destination_str)
+        selected_des.grid(row=5, column=3)
 
         self.root.mainloop()
 
@@ -117,6 +177,8 @@ def main():
     gui.wakeup_screen()
 
     gui.main_screen()
+    # gui.test_screen()
+
 
 
 main()
