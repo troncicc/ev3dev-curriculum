@@ -76,11 +76,11 @@ class MyDelegateEV3(object):
 
     def right_turn(self, left_speed_entry, right_speed_entry):
         print("Turning right.")
-        self.robot.turn_right(left_speed_entry, right_speed_entry)
+        self.robot.turn_right(1/2*left_speed_entry, 1/2*right_speed_entry)
 
     def left_turn(self, left_speed_entry, right_speed_entry):
         print("Turning left.")
-        self.robot.turn_left(left_speed_entry, right_speed_entry)
+        self.robot.turn_left(1/2*left_speed_entry, 1/2*right_speed_entry)
 
     def forward_drive(self, left_speed_entry, right_speed_entry):
         print("Driving forward.")
@@ -94,35 +94,44 @@ class MyDelegateEV3(object):
         print("Stopping.")
         self.robot.stop()
 
-    def park(self, happy):
+    def drop_arm(self):
+        self.robot.stop()
+        print('Lowering arm')
+        self.robot.arm_down()
+
+    def calibrate(self):
+        self.robot.stop()
+        print('Calibrating... Please wait')
+        ev3.Sound.speak('Please wait')
+        self.robot.arm_calibration()
+
+    def park(self):
         print("Parking")
         self.robot.stop()
-        print('seeking_color')
+        ev3.Sound.speak("What do we have here?")
+        self.robot.arm_up()
+        self.robot.drive_inches(7, 200)
         color_sensor = ev3.ColorSensor()
         self.robot.color_sensor_get()
-        if color_sensor.color == 1:
-            print('Black color found')
-            self.mqtt_client.send_message('dwight', happy)
-        elif color_sensor.color == 2:
-            print('Blue color found')
-            happy = happy + 100
-            return happy
+        if color_sensor.color == 5:
+            print('Red color found')
+            ev3.Sound.speak('Ew. Trash').wait()
+            self.robot.seek_beacon_2()
         elif color_sensor.color == 3:
             print('Green color found')
-            happy = happy + 100
-            return happy
+            ev3.Sound.speak('Nothing here. Lets keep searching').wait()
         elif color_sensor.color == 4:
-            print('Yellow color found')
-            happy = happy + 100
-            return happy
-        elif color_sensor.color == 5:
-            print('Red color found')
-            happy = happy + 100
-            return happy
-        elif color_sensor.color == 6:
-            print('White color found')
-            happy = happy + 100
-            return happy
+            print('You found the treasure!!!')
+            ev3.Sound.speak('You found the treasure').wait()
+            self.mqtt_client.send_message('treasure')
+        else:
+            print('There is nothing here silly')
+            ev3.Sound.speak('Boy have you lost your mind?'
+                            'There aye int nothing here').wait()
+            self.robot.arm_down()
+
+    def shutdown(self):
+        self.robot.shutdown()
 
     def loop_forever(self):
         btn = ev3.Button()

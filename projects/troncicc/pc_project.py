@@ -17,10 +17,17 @@ class MyDelegatePC(object):
         """Data to be transmitted"""
         self.running = True
 
+    def bomb(self):
+        print('Oh no, its a bom-...')
+        print("You're dead")
+
+    def treasure(self):
+        """This is the function for when you find one of the yellow circles.
+        Yay treasure."""
+        print('Hooray! You found the treasure!!!')
+
 
 def main():
-    happy = 0
-
     dc = DataContainer()
     mydelegate = MyDelegatePC()
     mqtt_client = com.MqttClient(mydelegate)
@@ -35,33 +42,61 @@ def main():
     left_speed = 400
     right_speed = 400
 
-    forward_button = ttk.Button()
+    kr_photo = tkinter.PhotoImage(file='Ry_Ke.gif')
+    kr_button = ttk.Button(main_frame, image=kr_photo)
+    kr_button.image = kr_photo
+    kr_button.grid()
+    kr_button['command'] = lambda: print("Short description of Kelly Kapoor and Ryan Howard.")
+
+    forward_button = ttk.Button(main_frame, text="Forward")
+    forward_button.grid()
     forward_button['command'] = lambda: forward_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Up>', lambda event: forward_callback(mqtt_client, left_speed, right_speed))
 
-    down_button = ttk.Button()
+    down_button = ttk.Button(main_frame, text="Reverse")
+    down_button.grid()
     down_button['command'] = lambda: backward_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Down>', lambda event: backward_callback(mqtt_client, left_speed, right_speed))
 
-    left_button = ttk.Button()
+    left_button = ttk.Button(main_frame, text="Left")
+    left_button.grid()
     left_button['command'] = lambda: left_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Left>', lambda event: left_callback(mqtt_client, left_speed, right_speed))
 
-    right_button = ttk.Button()
+    right_button = ttk.Button(main_frame, text="Right")
+    right_button.grid()
     right_button['command'] = lambda: right_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Right>', lambda event: right_callback(mqtt_client, left_speed, right_speed))
 
-    stop_button = ttk.Button()
+    stop_button = ttk.Button(main_frame, text="Stop")
+    stop_button.grid()
     stop_button['command'] = lambda: stop_callback(mqtt_client)
     root.bind('<space>', lambda event: stop_callback(mqtt_client))
 
-    q_button = ttk.Button()
-    q_button['command'] = (lambda: quit_program(mqtt_client, False))
+    quit_button = ttk.Button(main_frame, text="Quit")
+    quit_button.grid()
+    quit_button['command'] = (lambda: quit_program(mqtt_client, False))
     root.bind('<q>', lambda event: quit_program(mqtt_client, False))
 
-    park_button = ttk.Button()
-    park_button['command'] = lambda: park_callback(mqtt_client, happy)
-    root.bind('<p>', lambda event: park_callback(mqtt_client, happy))
+    park_button = ttk.Button(main_frame, text="Pick up box?")
+    park_button.grid()
+    park_button['command'] = lambda: park_callback(mqtt_client)
+    root.bind('<p>', lambda event: park_callback(mqtt_client))
+
+    arm_down_button = ttk.Button()
+    arm_down_button.grid()
+    arm_down_button['command'] = lambda: arm_down_callback(mqtt_client)
+    root.bind('<d>', lambda event: arm_down_callback(mqtt_client))
+
+    cali_button = ttk.Button()
+    cali_button.grid()
+    cali_button['command'] = lambda: cali_callback(mqtt_client)
+    root.bind('<c>', lambda event: cali_callback(mqtt_client))
+
+    e_button = ttk.Button(main_frame, text="Exit")
+    e_button.grid(row=6, column=2)
+    e_button['command'] = (lambda: quit_program(mqtt_client, True))
+    root.bind('<Cancel>', lambda event: quit_program(mqtt_client, True))
 
     root.mainloop()
 
@@ -86,8 +121,16 @@ def stop_callback(mqtt_client):
     mqtt_client.send_message("brake")
 
 
-def park_callback(mqtt_client, happy):
-    mqtt_client.send_message("park", happy)
+def park_callback(mqtt_client):
+    mqtt_client.send_message("park")
+
+
+def arm_down_callback(mqtt_client):
+    mqtt_client.send_message("drop_arm")
+
+
+def cali_callback(mqtt_client):
+    mqtt_client.send_message("calibrate")
 
 
 def quit_program(mqtt_client, shutdown_ev3):
@@ -96,36 +139,6 @@ def quit_program(mqtt_client, shutdown_ev3):
         mqtt_client.send_message("shutdown")
     mqtt_client.close()
     exit()
-
-
-def dwight(happy):
-    """This is the function for when you encounter the desk cluster of Jim and Dwight. Jim is at reception, but
-    Dwight is ALWAYS there."""
-
-    root = tkinter.Tk()
-
-    main_frame = ttk.Frame(root, padding=20)
-    main_frame.grid()
-
-    photo = tkinter.PhotoImage(file='20090925_office_560x375.gif')
-
-    dwight_button = ttk.Button(main_frame, image=photo)
-
-    dwight_button.image = photo
-    dwight_button.grid()
-    dwight_button['command'] = lambda: print("Short description of Dwight.")
-
-    label = ttk.Label(main_frame, text='Dwight Schrute')
-    label.grid()
-
-    next_page_button = ttk.Button(main_frame, text="Next")
-    next_page_button.grid()
-    next_page_button['command'] = lambda: close_window(root)
-
-    root.mainloop()
-
-    happy = happy + 100
-    print('Michael Scott has gained 100 happy points! Your current happy score is ', happy)
 
 
 def close_window(root):
