@@ -76,11 +76,11 @@ class MyDelegateEV3(object):
 
     def right_turn(self, left_speed_entry, right_speed_entry):
         print("Turning right.")
-        self.robot.turn_right(left_speed_entry, right_speed_entry)
+        self.robot.turn_right(1/2*left_speed_entry, 1/2*right_speed_entry)
 
     def left_turn(self, left_speed_entry, right_speed_entry):
         print("Turning left.")
-        self.robot.turn_left(left_speed_entry, right_speed_entry)
+        self.robot.turn_left(1/2*left_speed_entry, 1/2*right_speed_entry)
 
     def forward_drive(self, left_speed_entry, right_speed_entry):
         print("Driving forward.")
@@ -95,12 +95,20 @@ class MyDelegateEV3(object):
         self.robot.stop()
 
     def drop_arm(self):
+        self.robot.stop()
         print('Lowering arm')
         self.robot.arm_down()
+
+    def calibrate(self):
+        self.robot.stop()
+        print('Calibrating... Please wait')
+        ev3.Sound.speak('Please wait')
+        self.robot.arm_calibration()
 
     def park(self):
         print("Parking")
         self.robot.stop()
+        ev3.Sound.speak("What do we have here?")
         self.robot.arm_up()
         self.robot.drive_inches(7, 200)
         color_sensor = ev3.ColorSensor()
@@ -117,9 +125,13 @@ class MyDelegateEV3(object):
             ev3.Sound.speak('You found the treasure').wait()
             self.mqtt_client.send_message('treasure')
         else:
-            print('error')
-            ev3.Sound.speak('There is nothing here').wait()
+            print('There is nothing here silly')
+            ev3.Sound.speak('Boy have you lost your mind?'
+                            'There aye int nothing here').wait()
             self.robot.arm_down()
+
+    def shutdown(self):
+        self.robot.shutdown()
 
     def loop_forever(self):
         btn = ev3.Button()

@@ -106,13 +106,10 @@ def main():
     root.bind('<j>', lambda event: send_down(mqtt_client))
 
     # Buttons for quit and exit
-    q_button = ttk.Button(main_frame, text="Quit")
+    q_button = ttk.Button(main_frame, text="Exit")
     q_button.grid(row=5, column=2)
-    q_button['command'] = (lambda: quit_program(mqtt_client, False))
-
-    e_button = ttk.Button(main_frame, text="Exit")
-    e_button.grid(row=6, column=2)
-    e_button['command'] = (lambda: quit_program(mqtt_client, True))
+    q_button['command'] = (lambda: quit_program(mqtt_client, True))
+    root.bind('<>', lambda event: send_down(mqtt_client))
 
     root.mainloop()
 

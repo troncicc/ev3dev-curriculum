@@ -1,7 +1,6 @@
 import mqtt_remote_method_calls as com
 import tkinter
 from tkinter import ttk
-import ev3dev.ev3 as ev3
 
 
 class DataContainer(object):
@@ -18,9 +17,13 @@ class MyDelegatePC(object):
         """Data to be transmitted"""
         self.running = True
 
+    def bomb(self):
+        print('Oh no, its a bom-...')
+        print("You're dead")
+
     def treasure(self):
-        """This is the function for when you encounter the desk cluster of Jim and Dwight. Jim is at reception, but
-        Dwight is ALWAYS there."""
+        """This is the function for when you find one of the yellow circles.
+        Yay treasure."""
         print('Hooray! You found the treasure!!!')
 
 
@@ -81,8 +84,19 @@ def main():
     root.bind('<p>', lambda event: park_callback(mqtt_client))
 
     arm_down_button = ttk.Button()
+    arm_down_button.grid()
     arm_down_button['command'] = lambda: arm_down_callback(mqtt_client)
     root.bind('<d>', lambda event: arm_down_callback(mqtt_client))
+
+    cali_button = ttk.Button()
+    cali_button.grid()
+    cali_button['command'] = lambda: cali_callback(mqtt_client)
+    root.bind('<c>', lambda event: cali_callback(mqtt_client))
+
+    e_button = ttk.Button(main_frame, text="Exit")
+    e_button.grid(row=6, column=2)
+    e_button['command'] = (lambda: quit_program(mqtt_client, True))
+    root.bind('<Cancel>', lambda event: quit_program(mqtt_client, True))
 
     root.mainloop()
 
@@ -113,6 +127,10 @@ def park_callback(mqtt_client):
 
 def arm_down_callback(mqtt_client):
     mqtt_client.send_message("drop_arm")
+
+
+def cali_callback(mqtt_client):
+    mqtt_client.send_message("calibrate")
 
 
 def quit_program(mqtt_client, shutdown_ev3):
