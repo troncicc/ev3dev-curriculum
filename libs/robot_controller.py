@@ -43,6 +43,8 @@ class Snatch3r(object):
         # don't assert remote_control since it is external from the robot
         self.beacon_seeker = ev3.BeaconSeeker(channel=1)
         assert self.beacon_seeker
+        self.beacon_seeker_2 = ev3.BeaconSeeker(channel=1)
+        assert self.beacon_seeker_2
         self.pixy = ev3.Sensor(driver_name="pixy-lego")
         assert self.pixy
 
@@ -267,3 +269,4 @@ class Snatch3r(object):
             time.sleep(0.05)
 
         self.stop()
+        print("Now that that's over with, let's find some treasure!")

@@ -108,7 +108,7 @@ class MyDelegateEV3(object):
         if color_sensor.color == 5:
             print('Red color found')
             ev3.Sound.speak('Ew. Trash').wait()
-            self.robot.seek_beacon()
+            self.robot.seek_beacon_2()
         elif color_sensor.color == 3:
             print('Green color found')
             ev3.Sound.speak('Nothing here. Lets keep searching').wait()
