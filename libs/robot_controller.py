@@ -216,3 +216,54 @@ class Snatch3r(object):
         print("Abandon ship!")
         self.stop()
         return False
+
+    def seek_beacon_2(self):
+        """
+        Use the beacon mode of the ir_sensors to find the remote. If the beacon is not in range, spin in a circle until
+        the beacon is found.
+        """
+
+        forward_speed = 300
+        turn_speed = 100
+
+        while self.touch_sensor.is_pressed:
+            # The touch sensor can be used to abort the attempt (sometimes handy during testing)
+
+            # DONE: 3. Use the beacon_seeker object to get the current heading and distance.
+            current_heading = self.beacon_seeker.heading  # use the beacon_seeker heading
+            current_distance = self.beacon_seeker.distance  # use the beacon_seeker distance
+            if current_distance == -128:
+                # If the IR Remote is not found, robot spins in place to find beacon
+                print("IR Remote not found. Distance is -128")
+                self.turn_right(turn_speed, turn_speed)
+
+            elif current_distance == 100:
+                # If the IR Remote is not found, robot spins in place to find beacon
+                print("IR Remote not found. Distance is 100")
+                self.turn_right(turn_speed, turn_speed)
+            else:
+                if math.fabs(current_heading) < 2:
+                    # Close enough of a heading to move forward
+                    if current_distance == 1:
+                        print("Beacon found!")
+                        self.stop()
+                        self.arm_down()
+                    else:
+                        print("On the right heading. Distance: ", current_distance)
+                        self.drive_forward(forward_speed, forward_speed)
+
+                elif math.fabs(current_heading) < 10:
+                    if current_heading < 0:
+                        print("Adjusting heading:", current_heading)
+                        self.turn_left(turn_speed, turn_speed)
+                    else:
+                        print("Adjusting heading:", current_heading)
+                        self.turn_right(turn_speed, turn_speed)
+
+                else:
+                    self.turn_right(turn_speed, turn_speed)
+                    print("Heading too far off. Heading: ", current_heading)
+
+            time.sleep(0.05)
+
+        self.stop()
