@@ -2,7 +2,7 @@
  for the ev3 project. Functions are more sophisticated pieces of the puzzle,
  and many of their base components come from the robot_controller"""
 
-# import ev3dev.ev3 as ev3
+import ev3dev.ev3 as ev3
 import time
 
 
@@ -11,8 +11,8 @@ class WarehouseController(object):
     def __init__(self, robot, my_delegate):
         """Define recurring variables"""
 
-        self.white_level = 60
-        self.black_level = 40
+        self.white_level = 100
+        self.black_level = 10
         self.robot = robot
         self.my_delegate = my_delegate
         self.pixy = self.robot.pixy
@@ -62,10 +62,10 @@ class WarehouseController(object):
 
         self.on_color()
 
-        if self.robot.reflected_light_intensity >= self.black_level + 30:
-            self.robot.turn_right(400, 200)
+        if self.robot.reflected_light_intensity >= self.black_level + 5:
+            self.robot.turn_right(200, 100)
         else:
-            self.robot.drive_forward(400, 400)
+            self.robot.drive_forward(200, 200)
 
     def follow_line_both(self):
         """Follow a line regardless of the edge"""
@@ -74,9 +74,9 @@ class WarehouseController(object):
         self.on_color()
 
         if self.robot.reflected_light_intensity >= self.black_level + 30:
-            self.robot.turn_right(400, 200)
+            self.robot.turn_right(200, 100)
         else:
-            self.robot.turn_left(200, 400)
+            self.robot.turn_left(100, 200)
 
     def on_color(self):
         """Causes robot to turn 90deg a particular direction when at a junction based on the colour"""
@@ -84,58 +84,100 @@ class WarehouseController(object):
         current_color = self.robot.current_color
         print('Current colour: ', self.color_names[current_color])
         if current_color == 5:
+            print("Sees RED")
             self.color_is_red()
 
-        elif current_color == 2:
-            self.color_is_blue()
-
         elif current_color == 4:
+            print("Sees YELLOW")
             self.color_is_yellow()
 
+        elif current_color == 3:
+            print("Sees GREEN")
+            self.color_is_green()
+
     def color_is_red(self):
-        if self.cargo_location == 1:
-            print("turn left")
-            self.robot.turn_degrees(90, 200)
-            print("inch forward")
-            self.robot.drive_inches(1, 300)
+        if self.carrying is False:
+            if self.cargo_location == 1:
+                print("turn left")
+                self.robot.turn_degrees(90, 200)
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
 
-        elif self.cargo_location == 2:
-            print("turn right")
-            self.robot.turn_degrees(-90, 300)
-            print("inch forward")
-            self.robot.drive_inches(1, 300)
+            elif self.cargo_location == 2:
+                print("turn right")
+                self.robot.turn_degrees(-90, 300)
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
 
-        elif self.cargo_location == 3:
-            print("drive")
-            self.robot.drive_inches(2, 300)
+            elif self.cargo_location == 3:
+                print("drive")
+                self.robot.drive_inches(2, 300)
 
-        elif self.cargo_location == 4:
-            print("drive")
-            self.robot.drive_inches(2, 300)
+            elif self.cargo_location == 4:
+                print("drive")
+                self.robot.drive_inches(2, 300)
+        else:  # Robot is carrying cargo
 
-    def color_is_blue(self):
-        if self.cargo_location == 3:
-            print("turn left")
-            self.robot.turn_degrees(90, 300)
-            print("inch forward")
-            self.robot.drive_inches(1, 300)
+            if self.cargo_location == 3 or self.cargo_location == 4:
+                if self.cargo_destination == 2:
+                    self.robot.turn_degrees(90, 300)
+                elif self.cargo_destination == 1:
+                    self.robot.turn_degrees(-90, 300)
 
-        elif self.cargo_location == 4:
-            print("turn right")
-            self.robot.turn_degrees(-90, 300)
-            print("inch forward")
-            self.robot.drive_inches(1, 300)
+            elif self.cargo_location == 1:
+                if self.cargo_destination == 3 or self.cargo_destination == 4:
+                    self.robot.turn_degrees(90, 300)
+                elif self.cargo_destination == 2:
+                    self.robot.drive_inches(2, 400)
 
-        elif self.cargo_location == 1:
-            print("drive")
-            self.robot.drive_inches(2, 400)
-
-        elif self.cargo_location == 2:
-            print("drive")
-            self.robot.drive_inches(2, 400)
+            elif self.cargo_location == 2:
+                if self.cargo_destination == 3 or self.cargo_destination == 4:
+                    self.robot.turn_degrees(-90, 300)
+                elif self.cargo_destination == 1:
+                    self.robot.drive_inches(2, 400)
 
     def color_is_yellow(self):
-        print("on yellow")
+        if self.carrying is False:
+            if self.cargo_location == 3:
+                print("turn left")
+                self.robot.turn_degrees(90, 300)
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
+
+            elif self.cargo_location == 4:
+                print("turn right")
+                self.robot.turn_degrees(-90, 300)
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
+
+            elif self.cargo_location == 1:
+                print("drive")
+                self.robot.drive_inches(2, 400)
+
+            elif self.cargo_location == 2:
+                print("drive")
+                self.robot.drive_inches(2, 400)
+        else:  # Robot is carrying cargo
+
+            if self.cargo_location == 1 or self.cargo_location == 2:
+                if self.cargo_destination == 3:
+                    self.robot.turn_degrees(90, 300)
+                elif self.cargo_destination == 4:
+                    self.robot.turn_degrees(-90, 300)
+
+            elif self.cargo_location == 3:
+                if self.cargo_destination == 1 or self.cargo_destination == 2:
+                    self.robot.turn_degrees(-90, 300)
+                elif self.cargo_destination == 4:
+                    self.robot.drive_inches(2, 400)
+
+            elif self.cargo_location == 4:
+                if self.cargo_destination == 1 or self.cargo_destination == 2:
+                    self.robot.turn_degrees(90, 300)
+                elif self.cargo_destination == 3:
+                    self.robot.drive_inches(2, 400)
+
+    def color_is_green(self):
         self.robot.stop()
 
     def find_cargo(self):
@@ -145,6 +187,8 @@ class WarehouseController(object):
         x = self.pixy.value(1)
         y = self.pixy.value(2)
         print("(X, Y) = ({}, {})".format(x, y))
+        self.robot.left_motor.position = 0
+        self.robot.right_motor.position = 0
 
         if x == 0 and y == 0:   # Does not see cargo
             self.robot.turn_left(turn_speed, turn_speed)
@@ -157,4 +201,7 @@ class WarehouseController(object):
             self.robot.drive_inches(3, 100)
             self.robot.arm_up()
             self.cargo_found = True
-
+            self.carrying = True
+            self.robot.left_motor.run_to_rel_pos(position_sp=0)
+            self.robot.left_motor.run_to_rel_pos(position_sp=0)
+            self.robot.turn_degrees(180, 300)

@@ -11,21 +11,28 @@ class MyDelegatePC(object):
     def __init__(self):
         """Data to be transmitted"""
         self.running = True
+        self.status = None
+        # self.gui = gui
 
     def print_stuff(self, stuff_to_print):
         print(stuff_to_print)
+
+    def status_update(self, status):
+        self.status = status
 
 
 class GUI(object):
     """The tkinter windows and buttons for GUI"""
 
-    def __init__(self, mqtt_client):
+    def __init__(self, mqtt_client, my_delegate):
         self.mqtt_client = mqtt_client
         self.root = None
         self.location = None
         self.destination = None
-        self.location_str = "Location is Not Selected"
-        self.destination_str = "Destination is Not Selected"
+        self.destination_str = None
+        self.confirm_label_str = None
+        self.my_delegate = my_delegate
+        self.status_str = self.my_delegate.status
 
     def test_connection(self):
         self.mqtt_client.send_message("say_hello")
@@ -59,13 +66,27 @@ class GUI(object):
 
     def set_destination(self, destination):
         self.destination = destination
-        self.destination_str = "Destination {} Selected".format(destination)
+        # self.destination_str.set("Destination {} Selected".format(destination))
         self.mqtt_client.send_message("set_destination", [destination])
 
     def set_location(self, location):
         self.location = location
-        self.location_str = "Location {} Selected".format(location)
+        # self.location_str.set("Location {} Selected".format(location))
         self.mqtt_client.send_message("set_location", [location])
+
+    def confirm_and_continue(self):
+        if self.location == 0 or self.destination == 0:
+            self.confirm_label_str.set("Location and/or Destination not set")
+        elif self.location == self.destination:
+            self.confirm_label_str.set("Invalid selection")
+        else:
+            self.confirm_label_str.set("Confirmed")
+            self.mqtt_client.send_message("begin_retrieval")
+            self.status_str.set("Beginning Retrieval")
+            self.root.destroy()
+
+    def status_update(self):
+        pass
 
     def test_screen(self):
         self.root = tkinter.Tk()
@@ -128,42 +149,100 @@ class GUI(object):
         main_frame = ttk.Frame(self.root, padding=20, relief='raised')
         main_frame.grid()
 
-        loc = ttk.Label(main_frame, text="Select your Location")
-        loc.grid(row=0, column=1)
-        loc1 = ttk.Button(main_frame, text="Location 1")
+        # loc = ttk.Label(main_frame, text="Select your Location")
+        # loc.grid(row=0, column=1)
+        # loc1 = ttk.Button(main_frame, text="Location 1")
+        # loc1.grid(row=1, column=1)
+        # loc1['command'] = lambda: self.set_location(1)
+        # loc2 = ttk.Button(main_frame, text="Location 2")
+        # loc2.grid(row=2, column=1)
+        # loc2['command'] = lambda: self.set_location(2)
+        # loc3 = ttk.Button(main_frame, text="Location 3")
+        # loc3.grid(row=3, column=1)
+        # loc3['command'] = lambda: self.set_location(3)
+        # loc4 = ttk.Button(main_frame, text="Location 4")
+        # loc4.grid(row=4, column=1)
+        # loc4['command'] = lambda: self.set_location(4)
+        # self.location_str = tkinter.StringVar()
+        # self.location_str.set("Location is NA")
+        # selected_loc = ttk.Label(main_frame, textvariable=self.location_str)
+        # selected_loc.grid(row=5, column=1)
+        # old button type, just in case
+
+        v1 = tkinter.IntVar()
+        v2 = tkinter.IntVar()
+
+        loc1 = ttk.Radiobutton(main_frame, text="Location 1", variable=v1, value=1)
         loc1.grid(row=1, column=1)
         loc1['command'] = lambda: self.set_location(1)
-        loc2 = ttk.Button(main_frame, text="Location 2")
+        loc2 = ttk.Radiobutton(main_frame, text="Location 2", variable=v1, value=2)
         loc2.grid(row=2, column=1)
         loc2['command'] = lambda: self.set_location(2)
-        loc3 = ttk.Button(main_frame, text="Location 3")
+        loc3 = ttk.Radiobutton(main_frame, text="Location 3", variable=v1, value=3)
         loc3.grid(row=3, column=1)
         loc3['command'] = lambda: self.set_location(3)
-        loc4 = ttk.Button(main_frame, text="Location 4")
+        loc4 = ttk.Radiobutton(main_frame, text="Location 4", variable=v1, value=4)
         loc4.grid(row=4, column=1)
         loc4['command'] = lambda: self.set_location(4)
-        selected_loc = ttk.Label(main_frame, text=self.location_str)
-        selected_loc.grid(row=5, column=1)
 
         gap = ttk.Label(main_frame, text="     ")
         gap.grid(row=0, column=2)
 
-        des = ttk.Label(main_frame, text="Select your Destination")
-        des.grid(row=0, column=3)
-        des1 = ttk.Button(main_frame, text="Destination 1")
+        # des = ttk.Label(main_frame, text="Select your Destination")
+        # des.grid(row=0, column=3)
+        # des1 = ttk.Button(main_frame, text="Destination 1")
+        # des1.grid(row=1, column=3)
+        # des1['command'] = lambda: self.set_destination(1)
+        # des2 = ttk.Button(main_frame, text="Destination 2")
+        # des2.grid(row=2, column=3)
+        # des2['command'] = lambda: self.set_destination(2)
+        # des3 = ttk.Button(main_frame, text="Destination 3")
+        # des3.grid(row=3, column=3)
+        # des3['command'] = lambda: self.set_destination(3)
+        # des4 = ttk.Button(main_frame, text="Destination 4")
+        # des4.grid(row=4, column=3)
+        # des4['command'] = lambda: self.set_destination(4)
+        # self.destination_str = tkinter.StringVar()
+        # self.destination_str.set("Destination is NA")
+        # selected_des = ttk.Label(main_frame, textvariable=self.destination_str)
+        # selected_des.grid(row=5, column=3)
+        # old button type, just in case
+
+        des1 = ttk.Radiobutton(main_frame, text="Destination 1", variable=v2, value=1)
         des1.grid(row=1, column=3)
         des1['command'] = lambda: self.set_destination(1)
-        des2 = ttk.Button(main_frame, text="Destination 2")
+        des2 = ttk.Radiobutton(main_frame, text="Destination 2", variable=v2, value=2)
         des2.grid(row=2, column=3)
         des2['command'] = lambda: self.set_destination(2)
-        des3 = ttk.Button(main_frame, text="Destination 3")
+        des3 = ttk.Radiobutton(main_frame, text="Destination 3", variable=v2, value=3)
         des3.grid(row=3, column=3)
         des3['command'] = lambda: self.set_destination(3)
-        des4 = ttk.Button(main_frame, text="Destination 4")
+        des4 = ttk.Radiobutton(main_frame, text="Destination 4", variable=v2, value=4)
         des4.grid(row=4, column=3)
         des4['command'] = lambda: self.set_destination(4)
-        selected_des = ttk.Label(main_frame, text=self.destination_str)
-        selected_des.grid(row=5, column=3)
+
+        confirm = ttk.Button(main_frame, text="Confirm?")
+        confirm.grid(row=6, column=2)
+        confirm['command'] = lambda: self.confirm_and_continue()
+        self.confirm_label_str = tkinter.StringVar()
+        self.confirm_label_str.set(" ")
+        confirm_label = ttk.Label(main_frame, textvariable=self.confirm_label_str)
+        confirm_label.grid(row=7, column=2)
+
+        self.status_str = tkinter.StringVar()
+        self.status_str.set("Beginning Retrieval")
+
+        self.root.mainloop()
+
+    def running_screen(self):
+        self.root = tkinter.Tk()
+        self.root.title = "Robot Running"
+
+        main_frame = ttk.Frame(self.root, padding=40, relief='raised')
+        main_frame.grid()
+
+        status = ttk.Label(main_frame, textvariable=self.status_str)
+        status.grid(row=1, column=1)
 
         self.root.mainloop()
 
@@ -172,13 +251,15 @@ def main():
     mydelegate = MyDelegatePC()
     mqtt_client = com.MqttClient(mydelegate)
     mqtt_client.connect_to_ev3()
-    gui = GUI(mqtt_client)
+    gui = GUI(mqtt_client, mydelegate)
+
+    # gui.test_screen()
 
     gui.wakeup_screen()
 
     gui.main_screen()
-    # gui.test_screen()
 
+    gui.running_screen()
 
 
 main()

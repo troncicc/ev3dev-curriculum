@@ -18,9 +18,11 @@ class MyDelegateEv3(object):
         self.warehouse = warehouse_controller.WarehouseController(robot, self)
         self.running = True
         self.startup = True
+        self.main = True
         self.following = True
         self.seeking = True
         self.carrying = True
+        self.status = None
 
     def cancel(self):
         pass
@@ -36,7 +38,6 @@ class MyDelegateEv3(object):
         self.running = False
 
     def follow_line_left(self):
-        self.warehouse.cargo_location = 1
         print("Destination: ", self.warehouse.cargo_location)
         self.following = True
         while self.following:
@@ -58,12 +59,11 @@ class MyDelegateEv3(object):
         self.robot.stop()
 
     def follow_line_both(self):
-        self.warehouse.cargo_location = 1
         print("Destination: ", self.warehouse.cargo_location)
         self.following = True
         while self.following:
             self.warehouse.follow_line_both()
-            if self.warehouse.robot.current_color == 4:
+            if self.warehouse.robot.current_color == 3:
                 self.following = False
             time.sleep(.01)
         self.robot.stop()
@@ -89,6 +89,31 @@ class MyDelegateEv3(object):
         self.robot.stop()
         self.carrying = True
         ev3.Sound.beep()
+
+    def set_location(self, location):
+        self.warehouse.cargo_location = location
+        print("Cargo location is: ", self.warehouse.cargo_location)
+
+    def set_destination(self, destination):
+        self.warehouse.cargo_destination = destination
+        print("Cargo destination is: ", self.warehouse.cargo_destination)
+
+    def begin_retrieval(self):
+        self.main = False
+        self.status = ("Moving to location ", self.warehouse.cargo_location)
+        ev3.Sound.speak("Moving cargo from location {} to destination {}".format(self.warehouse.cargo_location,
+                                                                                 self.warehouse.cargo_destination)).wait()
+        self.follow_line_both()
+        self.status = "Searching for cargo"
+        self.find_cargo()
+        self.status = ("Cargo retrieved. Moving to destination ", self.warehouse.cargo_destination)
+        ev3.Sound.speak("I have the cargo. Moving to the destination point.")
+        self.follow_line_both()
+        self.status = "Destination reached. Placing cargo"
+        self.robot.arm_down()
+        self.robot.drive_inches(-4, 200)
+        self.status = "Objective complete"
+        ev3.Sound.speak("Objective complete, Captain.")
 
 
 class Delegate2(object):
@@ -135,6 +160,15 @@ class Delegate2(object):
     def find_cargo(self):
         pass
 
+    def set_location(self, location):
+        pass
+
+    def set_destination(self, destination):
+        pass
+
+    def begin_retrieval(self):
+        pass
+
 
 def main():
     robot = robo.Snatch3r()
@@ -150,7 +184,12 @@ def main():
     while my_delegate.startup:
         time.sleep(.01)
 
+    while my_delegate.main:
+
+        time.sleep(.01)
+
     while my_delegate.running:
+        mqtt_client.send_message("status_update", [my_delegate.status])
 
         time.sleep(.01)
 
@@ -168,6 +207,7 @@ def wakeup():
 
 def shutdown(robot):
     robot.shutdown()
+
 
 
 main()

@@ -138,7 +138,7 @@ class Snatch3r(object):
 
     def color_sensor_get(self):
         self.current_color = self.color_sensor.color
-        time.sleep(.01)
+        time.sleep(.05)
         self.reflected_light_intensity = self.color_sensor.reflected_light_intensity
 
     def shutdown(self):

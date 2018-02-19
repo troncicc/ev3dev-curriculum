@@ -19,14 +19,14 @@ DONE 7: Find a way for the robot to search for "cargo"
 
 DONE 8: Implement a function to retreive cargo
 
-TODO 9 (optional): Make a way for the robot to tell if cargo has been retrieved
+DONE :9 (optional): Make a way for the robot to tell if cargo has been retrieved
                     (ie. did the robot drop the box?)
 
-TODO 10: Make robot take cargo to designated location
+DONE 10: Make robot take cargo to designated location
 
-TODO 11: Make GUI for human to tell robot what cargo to retrieve and where to put it
+DONE 11: Make GUI for human to tell robot what cargo to retrieve and where to put it
 
-
+TODO 12: Fine-tune colour sensor so it doesn't misdiagnose colors. Finish status window
 
 
 """
