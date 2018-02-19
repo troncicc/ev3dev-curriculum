@@ -73,7 +73,7 @@ class WarehouseController(object):
 
         self.on_color()
 
-        if self.robot.reflected_light_intensity >= self.black_level + 30:
+        if self.robot.reflected_light_intensity >= self.black_level + 20:
             self.robot.turn_right(200, 100)
         else:
             self.robot.turn_left(100, 200)

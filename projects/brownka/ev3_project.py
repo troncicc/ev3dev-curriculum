@@ -19,10 +19,10 @@ class MyDelegateEv3(object):
         self.running = True
         self.startup = True
         self.main = True
-        self.following = True
-        self.seeking = True
-        self.carrying = True
-        self.status = None
+        self.following = False
+        self.seeking = False
+        self.carrying = False
+        self.status = "Start"
 
     def cancel(self):
         pass
@@ -81,6 +81,7 @@ class MyDelegateEv3(object):
 
     def find_cargo(self):
         print("search")
+        self.seeking = True
         while self.seeking:
             self.warehouse.find_cargo()
             if self.warehouse.cargo_found is True:
@@ -114,15 +115,20 @@ class MyDelegateEv3(object):
         self.robot.drive_inches(-4, 200)
         self.status = "Objective complete"
         ev3.Sound.speak("Objective complete, Captain.")
+        self.running = False
+
+    def check_status(self):
+        pass
 
 
 class Delegate2(object):
     """Delegate that cancels ongoing functions in the primary delegate and ignore all other commands"""
 
-    def __init__(self, robot, my_delegate):
+    def __init__(self, robot, my_delegate, mqtt_client):
         """Data to be saved and/or transmitted"""
         self.robot = robot
         self.my_delegate = my_delegate
+        self.mqtt_client = mqtt_client
 
     def cancel(self):
         self.my_delegate.following = False
@@ -169,12 +175,22 @@ class Delegate2(object):
     def begin_retrieval(self):
         pass
 
+    def check_status(self):
+        if self.my_delegate.carrying:
+            self.my_delegate.status = "Moving cargo to destination"
+        elif self.my_delegate.following:
+            self.my_delegate.status = "Moving to cargo location"
+        elif self.my_delegate.seeking:
+            self.my_delegate.status = "Searching for cargo"
+
+        self.mqtt_client.send_message("status_update", [self.my_delegate.status])
+
 
 def main():
     robot = robo.Snatch3r()
     my_delegate = MyDelegateEv3(robot)
-    my_delegate2 = Delegate2(robot, my_delegate)
     mqtt_client = com.MqttClient(my_delegate)
+    my_delegate2 = Delegate2(robot, my_delegate, mqtt_client)
     mqtt_client2 = com.MqttClient(my_delegate2)
     mqtt_client.connect_to_pc()
     mqtt_client2.connect_to_pc()
@@ -184,14 +200,21 @@ def main():
     while my_delegate.startup:
         time.sleep(.01)
 
+    print("robot done with startup")
+
     while my_delegate.main:
 
         time.sleep(.01)
 
+    print("robot done with main")
+
     while my_delegate.running:
+        print(my_delegate.status)
         mqtt_client.send_message("status_update", [my_delegate.status])
 
         time.sleep(.01)
+
+    print("robot done with running")
 
     shutdown(robot)
 

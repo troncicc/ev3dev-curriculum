@@ -32,7 +32,7 @@ class GUI(object):
         self.destination_str = None
         self.confirm_label_str = None
         self.my_delegate = my_delegate
-        self.status_str = self.my_delegate.status
+        self.status_str = None
 
     def test_connection(self):
         self.mqtt_client.send_message("say_hello")
@@ -86,7 +86,7 @@ class GUI(object):
             self.root.destroy()
 
     def status_update(self):
-        pass
+        self.status_str.set(self.my_delegate.status)
 
     def test_screen(self):
         self.root = tkinter.Tk()
@@ -149,8 +149,8 @@ class GUI(object):
         main_frame = ttk.Frame(self.root, padding=20, relief='raised')
         main_frame.grid()
 
-        # loc = ttk.Label(main_frame, text="Select your Location")
-        # loc.grid(row=0, column=1)
+        loc = ttk.Label(main_frame, text="Select your Location")
+        loc.grid(row=0, column=1)
         # loc1 = ttk.Button(main_frame, text="Location 1")
         # loc1.grid(row=1, column=1)
         # loc1['command'] = lambda: self.set_location(1)
@@ -188,8 +188,8 @@ class GUI(object):
         gap = ttk.Label(main_frame, text="     ")
         gap.grid(row=0, column=2)
 
-        # des = ttk.Label(main_frame, text="Select your Destination")
-        # des.grid(row=0, column=3)
+        des = ttk.Label(main_frame, text="Select your Destination")
+        des.grid(row=0, column=3)
         # des1 = ttk.Button(main_frame, text="Destination 1")
         # des1.grid(row=1, column=3)
         # des1['command'] = lambda: self.set_destination(1)
@@ -237,6 +237,9 @@ class GUI(object):
     def running_screen(self):
         self.root = tkinter.Tk()
         self.root.title = "Robot Running"
+
+        self.status_str = tkinter.StringVar()
+        self.status_str.set(self.my_delegate.status)
 
         main_frame = ttk.Frame(self.root, padding=40, relief='raised')
         main_frame.grid()
