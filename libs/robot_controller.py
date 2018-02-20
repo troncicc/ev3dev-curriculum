@@ -154,6 +154,7 @@ class Snatch3r(object):
         print("Goodbye")
         ev3.Sound.speak("Goodbye").wait()
         self.running = False
+        self.stop()
 
     def loop_forever(self):
         # This is a convenience method that I don't really recommend for most programs other than m5.

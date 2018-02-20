@@ -73,16 +73,16 @@ class WarehouseController(object):
 
         self.on_color()
 
-        if self.robot.reflected_light_intensity >= self.black_level + 30:
+        if self.robot.reflected_light_intensity >= self.black_level + 20:
             self.robot.turn_right(200, 100)
         else:
             self.robot.turn_left(100, 200)
 
     def on_color(self):
-        """Causes robot to turn 90deg a particular direction when at a junction based on the colour"""
+        """Causes robot to turn 90deg in a particular direction when at a junction based on the colour"""
 
         current_color = self.robot.current_color
-        print('Current colour: ', self.color_names[current_color])
+        # print('Current colour: ', self.color_names[current_color])
         if current_color == 5:
             print("Sees RED")
             self.color_is_red()
@@ -98,12 +98,16 @@ class WarehouseController(object):
     def color_is_red(self):
         if self.carrying is False:
             if self.cargo_location == 1:
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
                 print("turn left")
                 self.robot.turn_degrees(90, 200)
                 print("inch forward")
                 self.robot.drive_inches(1, 300)
 
             elif self.cargo_location == 2:
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
                 print("turn right")
                 self.robot.turn_degrees(-90, 300)
                 print("inch forward")
@@ -120,31 +124,58 @@ class WarehouseController(object):
 
             if self.cargo_location == 3 or self.cargo_location == 4:
                 if self.cargo_destination == 2:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
+
                 elif self.cargo_destination == 1:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(-90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
 
             elif self.cargo_location == 1:
                 if self.cargo_destination == 3 or self.cargo_destination == 4:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
+
                 elif self.cargo_destination == 2:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.drive_inches(2, 400)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
 
             elif self.cargo_location == 2:
                 if self.cargo_destination == 3 or self.cargo_destination == 4:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(-90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
+
                 elif self.cargo_destination == 1:
                     self.robot.drive_inches(2, 400)
 
     def color_is_yellow(self):
         if self.carrying is False:
             if self.cargo_location == 3:
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
                 print("turn left")
                 self.robot.turn_degrees(90, 300)
                 print("inch forward")
                 self.robot.drive_inches(1, 300)
 
             elif self.cargo_location == 4:
+                print("inch forward")
+                self.robot.drive_inches(1, 300)
                 print("turn right")
                 self.robot.turn_degrees(-90, 300)
                 print("inch forward")
@@ -161,19 +192,42 @@ class WarehouseController(object):
 
             if self.cargo_location == 1 or self.cargo_location == 2:
                 if self.cargo_destination == 3:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
+
                 elif self.cargo_destination == 4:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(-90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
 
             elif self.cargo_location == 3:
                 if self.cargo_destination == 1 or self.cargo_destination == 2:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(-90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
+
                 elif self.cargo_destination == 4:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.drive_inches(2, 400)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
 
             elif self.cargo_location == 4:
                 if self.cargo_destination == 1 or self.cargo_destination == 2:
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
                     self.robot.turn_degrees(90, 300)
+                    print("inch forward")
+                    self.robot.drive_inches(1, 300)
+
                 elif self.cargo_destination == 3:
                     self.robot.drive_inches(2, 400)
 
@@ -186,7 +240,7 @@ class WarehouseController(object):
 
         x = self.pixy.value(1)
         y = self.pixy.value(2)
-        print("(X, Y) = ({}, {})".format(x, y))
+        # print("(X, Y) = ({}, {})".format(x, y))
         self.robot.left_motor.position = 0
         self.robot.right_motor.position = 0
 
@@ -202,6 +256,5 @@ class WarehouseController(object):
             self.robot.arm_up()
             self.cargo_found = True
             self.carrying = True
-            self.robot.left_motor.run_to_rel_pos(position_sp=0)
-            self.robot.left_motor.run_to_rel_pos(position_sp=0)
-            self.robot.turn_degrees(180, 300)
+            self.robot.turn_degrees(200, 300)
+            self.robot.drive_inches(4, 200)
