@@ -17,14 +17,32 @@ class MyDelegatePC(object):
         """Data to be transmitted"""
         self.running = True
 
-    def bomb(self):
-        print('Oh no, its a bom-...')
-        print("You're dead")
-
     def treasure(self):
-        """This is the function for when you find one of the yellow circles.
+        """This is the function that is called from the ev3 when you find one of the yellow circles.
         Yay treasure."""
         print('Hooray! You found the treasure!!!')
+        window2 = tkinter.Toplevel()
+        treasure_image = tkinter.PhotoImage(file='treasure.gif')
+        treasure_button = ttk.Button(window2, image=treasure_image)
+
+        treasure_button.image = treasure_image
+        treasure_button.grid()
+        treasure_button['command'] = lambda: print("You found the treasure and your journey"
+                                                   " is complete.")
+
+    def fiery_death(self):
+        """This is the function that is called from the ev3 when you find one of the red circles.
+        It's a bomb and you die."""
+        print('Oh no, its a bom-...')
+        print("You're dead")
+        window = tkinter.Toplevel()
+        dead_image = tkinter.PhotoImage(file='youredead.gif')
+
+        dead_button = ttk.Button(window, image=dead_image)
+
+        dead_button.image = dead_image
+        dead_button.grid()
+        dead_button['command'] = lambda: print("Goodbye... Better luck next time?...")
 
 
 def main():
@@ -35,68 +53,66 @@ def main():
     dc.running = True
 
     root = tkinter.Tk()
-    root.title("driving")
+    root.title("THE HUNT")
 
     main_frame = ttk.Frame(root, padding=20, relief='raised')
     main_frame.grid()
     left_speed = 400
     right_speed = 400
 
-    kr_photo = tkinter.PhotoImage(file='Ry_Ke.gif')
-    kr_button = ttk.Button(main_frame, image=kr_photo)
-    kr_button.image = kr_photo
-    kr_button.grid()
-    kr_button['command'] = lambda: print("Short description of Kelly Kapoor and Ryan Howard.")
+    hunt_photo = tkinter.PhotoImage(file='The_Hunt (1).gif')
+    hunt_button = ttk.Button(main_frame, image=hunt_photo)
+    hunt_button.image = hunt_photo
+    hunt_button.grid(row=1, column=4)
+    hunt_button['command'] = lambda: print("Are you ready to join THE HUNT?")
 
     forward_button = ttk.Button(main_frame, text="Forward")
-    forward_button.grid()
+    forward_button.grid(row=3, column=2)
     forward_button['command'] = lambda: forward_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Up>', lambda event: forward_callback(mqtt_client, left_speed, right_speed))
 
     down_button = ttk.Button(main_frame, text="Reverse")
-    down_button.grid()
+    down_button.grid(row=5, column=2)
     down_button['command'] = lambda: backward_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Down>', lambda event: backward_callback(mqtt_client, left_speed, right_speed))
 
     left_button = ttk.Button(main_frame, text="Left")
-    left_button.grid()
+    left_button.grid(row=4, column=1)
     left_button['command'] = lambda: left_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Left>', lambda event: left_callback(mqtt_client, left_speed, right_speed))
 
     right_button = ttk.Button(main_frame, text="Right")
-    right_button.grid()
+    right_button.grid(row=4, column=3)
     right_button['command'] = lambda: right_callback(mqtt_client, left_speed, right_speed)
     root.bind('<Right>', lambda event: right_callback(mqtt_client, left_speed, right_speed))
 
     stop_button = ttk.Button(main_frame, text="Stop")
-    stop_button.grid()
+    stop_button.grid(row=4, column=2)
     stop_button['command'] = lambda: stop_callback(mqtt_client)
     root.bind('<space>', lambda event: stop_callback(mqtt_client))
 
     quit_button = ttk.Button(main_frame, text="Quit")
-    quit_button.grid()
+    quit_button.grid(row=5, column=5)
     quit_button['command'] = (lambda: quit_program(mqtt_client, False))
     root.bind('<q>', lambda event: quit_program(mqtt_client, False))
 
     park_button = ttk.Button(main_frame, text="Pick up box?")
-    park_button.grid()
+    park_button.grid(row=3, column=4)
     park_button['command'] = lambda: park_callback(mqtt_client)
     root.bind('<p>', lambda event: park_callback(mqtt_client))
 
     arm_down_button = ttk.Button()
-    arm_down_button.grid()
     arm_down_button['command'] = lambda: arm_down_callback(mqtt_client)
     root.bind('<d>', lambda event: arm_down_callback(mqtt_client))
 
     cali_button = ttk.Button()
-    cali_button.grid()
     cali_button['command'] = lambda: cali_callback(mqtt_client)
     root.bind('<c>', lambda event: cali_callback(mqtt_client))
 
     e_button = ttk.Button(main_frame, text="Exit")
-    e_button.grid(row=6, column=2)
+    e_button.grid(row=6, column=5)
     e_button['command'] = (lambda: quit_program(mqtt_client, True))
-    root.bind('<Cancel>', lambda event: quit_program(mqtt_client, True))
+    root.bind('<e>', lambda event: quit_program(mqtt_client, True))
 
     root.mainloop()
 

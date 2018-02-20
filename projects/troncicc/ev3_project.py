@@ -62,6 +62,7 @@ import mqtt_remote_method_calls as com
 
 
 class MyDelegateEV3(object):
+    """Most of the functions below are self explanatory."""
     def __init__(self):
         self.robot = robo.Snatch3r()
         self.mqtt_client = com.MqttClient()
@@ -75,23 +76,23 @@ class MyDelegateEV3(object):
         self.robot.arm_down()
 
     def right_turn(self, left_speed_entry, right_speed_entry):
-        print("Turning right.")
+        print("Turning right")
         self.robot.turn_right(1/2*left_speed_entry, 1/2*right_speed_entry)
 
     def left_turn(self, left_speed_entry, right_speed_entry):
-        print("Turning left.")
+        print("Turning left")
         self.robot.turn_left(1/2*left_speed_entry, 1/2*right_speed_entry)
 
     def forward_drive(self, left_speed_entry, right_speed_entry):
-        print("Driving forward.")
+        print("Driving forward")
         self.robot.drive_forward(left_speed_entry, right_speed_entry)
 
     def backward_drive(self, left_speed_entry, right_speed_entry):
-        print("Driving backward.")
+        print("Driving backward")
         self.robot.drive_back(left_speed_entry, right_speed_entry)
 
     def brake(self):
-        print("Stopping.")
+        print("Stopping")
         self.robot.stop()
 
     def drop_arm(self):
@@ -106,31 +107,81 @@ class MyDelegateEV3(object):
         self.robot.arm_calibration()
 
     def park(self):
+        """This is the function that is called when press p or click on the button that says Pick up box?
+        The robot will stop and pick up the cup using the arm. After this it will drive forward some inches
+        and get the color that it is on.
+        1. If the color is red, its a bomb. If you find a cup with a bomb under it, the robot will say Boom!
+        Loud explosion sounds. The robot will then freeze for 20 seconds simulating that you died. If you wait,
+        you can "respawn" and continue the game from where you left off. Also, a GUI will pop up saying that
+        you're dead.
+        2. If its green, its trash and the robot will be forced to drive automatically to 'throw it away'.
+        To do this it will use the Pixi cam to find the pink cup (the trash can) and it will put the
+        cup down and push it into the trash pile.
+        3. If the robot lands on the gold circle, it means you found the treasure and the robot will dance and
+        a GUI will pop up saying that you found the treasure!
+        4. If the robot finds no color or a color that is not listed, it will put the cup back down and allow
+        you to keep driving."""
         print("Parking")
         self.robot.stop()
-        ev3.Sound.speak("What do we have here?")
+        ev3.Sound.speak("What do we have here?").wait()
         self.robot.arm_up()
         self.robot.drive_inches(7, 200)
         color_sensor = ev3.ColorSensor()
         self.robot.color_sensor_get()
-        if color_sensor.color == 5:
-            print('Red color found')
-            ev3.Sound.speak('Ew. Trash').wait()
-            self.robot.seek_beacon_2()
-        elif color_sensor.color == 3:
+        if color_sensor.color == 3:
             print('Green color found')
-            ev3.Sound.speak('Nothing here. Lets keep searching').wait()
+            ev3.Sound.speak('Ew. Trash').wait()
+            self.find_trash_can()
+            self.robot.drive_inches(12, 200)
+        elif color_sensor.color == 5:
+            print('Red color found')
+            ev3.Sound.speak('Its a bomb!').wait()
+            time.sleep(2)
+            ev3.Sound.speak('Boom... loud explosion sounds!').wait()
+            self.mqtt_client.send_message('fiery_death')
+            self.robot.stop()
+            self.robot.shutdown()
+            time.sleep(20)
         elif color_sensor.color == 4:
-            print('You found the treasure!!!')
-            ev3.Sound.speak('You found the treasure').wait()
+            print('We found the treasure!!!')
+            ev3.Sound.speak('We found the treasure!').wait()
+            self.robot.turn_degrees(360, 700)
             self.mqtt_client.send_message('treasure')
         else:
-            print('There is nothing here silly')
-            ev3.Sound.speak('Boy have you lost your mind?'
-                            'There aye int nothing here').wait()
+            print('There is nothing here silly...')
+            ev3.Sound.speak('There is nothing here silly').wait()
             self.robot.arm_down()
 
+    def find_trash_can(self):
+        """This is the function that is called when the robot is ready to find the trash can to throw the box away."""
+        print("--------------------------------------------")
+        print(" Finding trash can...")
+        print("--------------------------------------------")
+
+        self.robot.pixy.mode = "SIG1"
+        turn_speed = 100
+
+        while self.robot.touch_sensor.is_pressed:
+
+            x = self.robot.pixy.value(1)
+            y = self.robot.pixy.value(2)
+            if x == 0 and y == 0:
+                self.robot.turn_left(200, 200)
+            elif x > 170:
+                self.robot.turn_right(turn_speed, turn_speed)
+            elif x < 150:
+                self.robot.turn_left(turn_speed, turn_speed)
+            else:
+                self.robot.stop()
+                self.robot.arm_down()
+
+            time.sleep(0.25)
+
+        print("Done!")
+        self.robot.stop()
+
     def shutdown(self):
+        """This program makes all motors in the robot stop."""
         self.robot.shutdown()
 
     def loop_forever(self):
