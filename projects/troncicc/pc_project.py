@@ -1,3 +1,9 @@
+"""In this project, the robot is an OCD treasure hunter. The gameboard consists of a bunch of
+   cups in any arrangement that you like. For demonstration purposes, I decided to just put them
+   all together in a line so its easier to show how things work. In reality,the circles will be
+   hidden under all of the cups and there is a bit of mystery to the game. The purpose is to find
+   the treasure without dying or being distracted too much by the trash everywhere."""
+
 import mqtt_remote_method_calls as com
 import tkinter
 from tkinter import ttk
