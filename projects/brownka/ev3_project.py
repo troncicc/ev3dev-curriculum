@@ -36,7 +36,6 @@ class MyDelegateEv3(object):
         self.carrying = False
         self.status = "Start"
 
-
     def say_hello(self):
         ev3.Sound.speak("Doo yoo know de way?")
 
