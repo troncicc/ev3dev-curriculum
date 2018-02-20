@@ -28,14 +28,25 @@ class MyDelegateEv3(object):
         pass
 
     def reset(self):
-        self.following = True
-        self.seeking = True
+        self.running = True
+        self.startup = True
+        self.main = True
+        self.following = False
+        self.seeking = False
+        self.carrying = False
+        self.status = "Start"
+
 
     def say_hello(self):
         ev3.Sound.speak("Doo yoo know de way?")
 
     def quit(self):
+        self.startup = False
+        self.main = False
         self.running = False
+        self.robot.stop()
+        self.robot.shutdown()
+        quit()
 
     def follow_line_left(self):
         print("Destination: ", self.warehouse.cargo_location)
@@ -80,7 +91,7 @@ class MyDelegateEv3(object):
         self.startup = False
 
     def find_cargo(self):
-        print("search")
+        # print("search")
         self.seeking = True
         while self.seeking:
             self.warehouse.find_cargo()
@@ -143,7 +154,12 @@ class Delegate2(object):
         pass
 
     def quit(self):
-        pass
+        self.my_delegate.startup = False
+        self.my_delegate.main = False
+        self.my_delegate.running = False
+        self.robot.stop()
+        self.robot.shutdown()
+        quit()
 
     def follow_line_left(self):
         pass
@@ -183,8 +199,6 @@ class Delegate2(object):
         elif self.my_delegate.seeking:
             self.my_delegate.status = "Searching for cargo"
 
-        self.mqtt_client.send_message("status_update", [self.my_delegate.status])
-
 
 def main():
     robot = robo.Snatch3r()
@@ -195,42 +209,37 @@ def main():
     mqtt_client.connect_to_pc()
     mqtt_client2.connect_to_pc()
 
-    wakeup()
+    while True:
+        wakeup()
 
-    while my_delegate.startup:
-        time.sleep(.01)
+        while my_delegate.startup:
+            time.sleep(.01)
 
-    print("robot done with startup")
+        print("robot done with startup")
 
-    while my_delegate.main:
+        while my_delegate.main:
 
-        time.sleep(.01)
+            time.sleep(.01)
 
-    print("robot done with main")
+        print("robot done with main")
 
-    while my_delegate.running:
-        print(my_delegate.status)
-        mqtt_client.send_message("status_update", [my_delegate.status])
+        while my_delegate.running:
+            my_delegate2.check_status()
+            print("EV3", my_delegate.status)
+            mqtt_client2.send_message("status_update", [my_delegate.status])
 
-        time.sleep(.01)
+            time.sleep(.01)
 
-    print("robot done with running")
+        print("robot done with running")
 
-    shutdown(robot)
-
-
-def test_connection(mqtt_client):
-    mqtt_client.send_message("print_stuff", ["some stuff"])
+        robot.shutdown()
+        time.sleep(5)
+        my_delegate.reset()
 
 
 def wakeup():
     ev3.Sound.speak("Welcome, Captain. A new shipment has arrived. I must calibrate before we proceed.").wait()
     print("Program Start")
-
-
-def shutdown(robot):
-    robot.shutdown()
-
 
 
 main()

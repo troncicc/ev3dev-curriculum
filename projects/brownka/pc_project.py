@@ -11,14 +11,23 @@ class MyDelegatePC(object):
     def __init__(self):
         """Data to be transmitted"""
         self.running = True
-        self.status = None
-        # self.gui = gui
+        self.gui_status = None
+        self.gui = None
 
-    def print_stuff(self, stuff_to_print):
-        print(stuff_to_print)
+    # def status_update(self, status):
+    #     print("STARTING STATUS UPDATE")
+    #     self.gui_status.set(status)
+    #     print("PC", status)
+    #
+    # def set_status(self, gui_status):
+    #     print("setting gui status")
+    #     self.gui_status = gui_status
+    #     self.gui_status.set("TEST")
+    def set_gui(self, gui):
+        self.gui = gui
 
     def status_update(self, status):
-        self.status = status
+        self.gui.status_str.set(status)
 
 
 class GUI(object):
@@ -26,13 +35,15 @@ class GUI(object):
 
     def __init__(self, mqtt_client, my_delegate):
         self.mqtt_client = mqtt_client
+        self.running = True
         self.root = None
-        self.location = None
-        self.destination = None
+        self.location = 0
+        self.destination = 0
         self.destination_str = None
         self.confirm_label_str = None
         self.my_delegate = my_delegate
         self.status_str = None
+        self.status = None
 
     def test_connection(self):
         self.mqtt_client.send_message("say_hello")
@@ -86,7 +97,14 @@ class GUI(object):
             self.root.destroy()
 
     def status_update(self):
-        self.status_str.set(self.my_delegate.status)
+        # self.status_str.set(self.my_delegate.status)
+        # self.my_delegate.set_status(self.status_str)
+        self.my_delegate.set_gui(self)
+
+    def quit_button(self):
+        self.mqtt_client.send_message("quit")
+        self.running = False
+        self.root.destroy()
 
     def test_screen(self):
         self.root = tkinter.Tk()
@@ -133,6 +151,10 @@ class GUI(object):
         self.root = tkinter.Tk()
         self.root.title = "Robot Wakeup"
 
+        self.status_str = tkinter.StringVar()
+        self.status_str.set('TEST0')
+        self.status_update()
+
         main_frame = ttk.Frame(self.root, padding=40, relief='raised')
         main_frame.grid()
 
@@ -140,34 +162,24 @@ class GUI(object):
         calibrate.grid(row=1, column=1)
         calibrate['command'] = lambda: self.wakeup_complete()
 
+        quit_button = tkinter.ttk.Button(main_frame, text='QUIT')
+        quit_button.grid(row=10, column=1)
+        quit_button['command'] = lambda: self.quit_button()
+
         self.root.mainloop()
 
     def main_screen(self):
         self.root = tkinter.Tk()
         self.root.title = "Robot Wakeup"
 
+        self.status_str = tkinter.StringVar()
+        self.status_str.set('TEST1')
+
         main_frame = ttk.Frame(self.root, padding=20, relief='raised')
         main_frame.grid()
 
         loc = ttk.Label(main_frame, text="Select your Location")
         loc.grid(row=0, column=1)
-        # loc1 = ttk.Button(main_frame, text="Location 1")
-        # loc1.grid(row=1, column=1)
-        # loc1['command'] = lambda: self.set_location(1)
-        # loc2 = ttk.Button(main_frame, text="Location 2")
-        # loc2.grid(row=2, column=1)
-        # loc2['command'] = lambda: self.set_location(2)
-        # loc3 = ttk.Button(main_frame, text="Location 3")
-        # loc3.grid(row=3, column=1)
-        # loc3['command'] = lambda: self.set_location(3)
-        # loc4 = ttk.Button(main_frame, text="Location 4")
-        # loc4.grid(row=4, column=1)
-        # loc4['command'] = lambda: self.set_location(4)
-        # self.location_str = tkinter.StringVar()
-        # self.location_str.set("Location is NA")
-        # selected_loc = ttk.Label(main_frame, textvariable=self.location_str)
-        # selected_loc.grid(row=5, column=1)
-        # old button type, just in case
 
         v1 = tkinter.IntVar()
         v2 = tkinter.IntVar()
@@ -190,24 +202,6 @@ class GUI(object):
 
         des = ttk.Label(main_frame, text="Select your Destination")
         des.grid(row=0, column=3)
-        # des1 = ttk.Button(main_frame, text="Destination 1")
-        # des1.grid(row=1, column=3)
-        # des1['command'] = lambda: self.set_destination(1)
-        # des2 = ttk.Button(main_frame, text="Destination 2")
-        # des2.grid(row=2, column=3)
-        # des2['command'] = lambda: self.set_destination(2)
-        # des3 = ttk.Button(main_frame, text="Destination 3")
-        # des3.grid(row=3, column=3)
-        # des3['command'] = lambda: self.set_destination(3)
-        # des4 = ttk.Button(main_frame, text="Destination 4")
-        # des4.grid(row=4, column=3)
-        # des4['command'] = lambda: self.set_destination(4)
-        # self.destination_str = tkinter.StringVar()
-        # self.destination_str.set("Destination is NA")
-        # selected_des = ttk.Label(main_frame, textvariable=self.destination_str)
-        # selected_des.grid(row=5, column=3)
-        # old button type, just in case
-
         des1 = ttk.Radiobutton(main_frame, text="Destination 1", variable=v2, value=1)
         des1.grid(row=1, column=3)
         des1['command'] = lambda: self.set_destination(1)
@@ -229,6 +223,10 @@ class GUI(object):
         confirm_label = ttk.Label(main_frame, textvariable=self.confirm_label_str)
         confirm_label.grid(row=7, column=2)
 
+        quit_button = tkinter.ttk.Button(main_frame, text='QUIT')
+        quit_button.grid(row=10, column=1)
+        quit_button['command'] = lambda: self.quit_button()
+
         self.status_str = tkinter.StringVar()
         self.status_str.set("Beginning Retrieval")
 
@@ -239,13 +237,17 @@ class GUI(object):
         self.root.title = "Robot Running"
 
         self.status_str = tkinter.StringVar()
-        self.status_str.set(self.my_delegate.status)
+        self.status_str.set('TEST2')
 
         main_frame = ttk.Frame(self.root, padding=40, relief='raised')
         main_frame.grid()
 
         status = ttk.Label(main_frame, textvariable=self.status_str)
         status.grid(row=1, column=1)
+
+        quit_button = tkinter.ttk.Button(main_frame, text='QUIT')
+        quit_button.grid(row=10, column=1)
+        quit_button['command'] = lambda: self.quit_button()
 
         self.root.mainloop()
 
@@ -255,14 +257,19 @@ def main():
     mqtt_client = com.MqttClient(mydelegate)
     mqtt_client.connect_to_ev3()
     gui = GUI(mqtt_client, mydelegate)
+    gui.status_update()
 
     # gui.test_screen()
-
-    gui.wakeup_screen()
-
-    gui.main_screen()
-
-    gui.running_screen()
+    while True:
+        gui.wakeup_screen()
+        if not gui.running:
+            break
+        gui.main_screen()
+        if not gui.running:
+            break
+        gui.running_screen()
+        if not gui.running:
+            break
 
 
 main()
